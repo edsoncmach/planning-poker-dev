@@ -59,7 +59,8 @@
                         <p class="sobretitulo">Participantes</p>
                         <h2><span id="total-participantes">0</span> na sala</h2>
                     </div>
-                    <ul id="lista-participantes" class="lista-participantes" aria-label="Participantes da sala"></ul>
+                    <ul id="lista-participantes" class="lista-participantes" aria-label="Participantes da sala" hidden>
+                    </ul>
                 </div>
 
                 <section class="mesa-de-votos" aria-labelledby="titulo-mesa">
@@ -71,13 +72,24 @@
                         <p class="status-votos"><span id="total-votos">0</span> votos enviados</p>
                     </div>
 
-                    <p class="status-mesa">Seu voto: <strong id="voto-atual">Nenhum</strong></p>
-                    <div id="resultados-votos" class="resultados-votos" aria-live="polite" hidden></div>
-                    <p id="media-votos" class="media-votos" aria-live="polite" hidden></p>
-                    <div class="acoes">
-                        <button id="btn-revelar" class="btn primary" type="button">Revelar votos</button>
-                        <button id="btn-limpar" class="btn secondary" type="button">Nova rodada</button>
-                        <span id="aviso-dono" class="aviso-dono" hidden>Somente o dono da sala controla a rodada.</span>
+                    <div class="arena-mesa" aria-label="Participantes sentados ao redor da mesa de votação">
+                        <div class="superficie-mesa">
+                            <p class="sobretitulo">Estimativa da equipe</p>
+                            <h3 id="nome-mesa">Planning Poker</h3>
+                            <p id="resumo-mesa" class="resumo-mesa">Aguardando participantes</p>
+                            <p id="media-votos" class="media-mesa" aria-live="polite" hidden></p>
+                        </div>
+                        <div id="assentos-mesa" class="assentos-mesa"></div>
+                    </div>
+
+                    <div class="controles-mesa">
+                        <p class="status-mesa">Seu voto: <strong id="voto-atual">Nenhum</strong></p>
+                        <div class="acoes">
+                            <button id="btn-revelar" class="btn primary" type="button">Revelar votos</button>
+                            <button id="btn-limpar" class="btn secondary" type="button">Nova rodada</button>
+                            <span id="aviso-dono" class="aviso-dono" hidden>Somente o dono da sala controla a
+                                rodada.</span>
+                        </div>
                     </div>
                 </section>
 

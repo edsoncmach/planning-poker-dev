@@ -32,7 +32,10 @@ const painelEntrada = document.getElementById('painel-entrada');
 const painelJogo = document.getElementById('painel-jogo');
 const botaoEntrar = document.getElementById('btn-entrar');
 const listaParticipantes = document.getElementById('lista-participantes');
-const resultadosVotos = document.getElementById('resultados-votos');
+const arenaMesa = document.querySelector('.arena-mesa');
+const assentosMesa = document.getElementById('assentos-mesa');
+const nomeMesa = document.getElementById('nome-mesa');
+const resumoMesa = document.getElementById('resumo-mesa');
 const mediaVotos = document.getElementById('media-votos');
 const botaoRevelar = document.getElementById('btn-revelar');
 const botaoNovaRodada = document.getElementById('btn-limpar');
@@ -43,6 +46,7 @@ let participanteId;
 let nomeParticipante = '';
 let metadataSala = null;
 let participantes = {};
+let votosRevelados = {};
 let revelado = false;
 let rodadaAtual = 1;
 let ouvintesConectados = false;
@@ -69,6 +73,7 @@ function definirSala(id, nome) {
     parametrosUrl.set('room', id);
     history.replaceState(null, '', `${window.location.pathname}?${parametrosUrl.toString()}`);
     document.getElementById('codigo-sala').textContent = nome;
+    nomeMesa.textContent = nome;
     caixaSala.hidden = false;
     campoNome.value = sessionStorage.getItem(`planning-poker-name-${salaId}`) || '';
 }
@@ -151,27 +156,97 @@ function desenharParticipantes() {
     document.getElementById('total-votos').textContent = String(
         itens.filter(([, participante]) => participante.votedRound === rodadaAtual).length
     );
+    desenharAssentos();
+}
+
+function desenharAssentos() {
+    assentosMesa.replaceChildren();
+    const itens = Object.entries(participantes).sort(([, primeiro], [, segundo]) =>
+        String(primeiro.name || '').localeCompare(String(segundo.name || ''), 'pt-BR')
+    );
+    const quantidade = itens.length;
+    const votosEnviados = itens.filter(([, participante]) => participante.votedRound === rodadaAtual).length;
+    const raioHorizontal = window.matchMedia('(max-width: 600px)').matches ? 35 : 42;
+    arenaMesa.classList.toggle('compacta', quantidade > 7 && quantidade <= 12);
+    arenaMesa.classList.toggle('densa', quantidade > 12);
+    assentosMesa.dataset.quantidade = String(quantidade);
+    resumoMesa.textContent = quantidade
+        ? `${votosEnviados} de ${quantidade} votos enviados`
+        : 'Aguardando participantes';
+
+    itens.forEach(([id, participante], indice) => {
+        let x;
+        let y;
+        if (quantidade > 12) {
+            const lugaresPorLado = Math.ceil(quantidade / 4);
+            const lado = Math.floor(indice / lugaresPorLado);
+            const lugar = indice % lugaresPorLado;
+            const lugaresNesteLado = Math.min(lugaresPorLado, quantidade - lado * lugaresPorLado);
+            const posicao = (minimo, maximo) => lugaresNesteLado === 1
+                ? 50
+                : minimo + (maximo - minimo) * lugar / (lugaresNesteLado - 1);
+
+            if (lado === 0) {
+                x = posicao(10, 90);
+                y = 10;
+            } else if (lado === 1) {
+                x = 90;
+                y = posicao(25, 75);
+            } else if (lado === 2) {
+                x = posicao(90, 10);
+                y = 90;
+            } else {
+                x = 10;
+                y = posicao(75, 25);
+            }
+        } else {
+            const angulo = -Math.PI / 2 + (2 * Math.PI * indice) / quantidade;
+            x = 50 + Math.cos(angulo) * raioHorizontal;
+            y = 50 + Math.sin(angulo) * 32;
+        }
+        const votou = participante.votedRound === rodadaAtual;
+        const assento = document.createElement('article');
+        assento.className = 'assento-mesa';
+        assento.style.setProperty('--seat-x', `${x}%`);
+        assento.style.setProperty('--seat-y', `${y}%`);
+
+        const nome = document.createElement('p');
+        nome.className = 'nome-assento';
+        const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
+        nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
+
+        const estado = document.createElement('span');
+        estado.className = votou ? 'estado-assento votou' : 'estado-assento';
+        estado.textContent = votou ? 'Voto enviado' : 'Escolhendo';
+
+        const carta = document.createElement('div');
+        carta.className = 'carta-mesa';
+        if (!votou) carta.classList.add('sem-voto');
+        if (votou && revelado && Object.hasOwn(votosRevelados, id)) carta.classList.add('revelada');
+        carta.setAttribute('aria-label', votou && revelado && Object.hasOwn(votosRevelados, id)
+            ? `Voto de ${participante.name}: ${votosRevelados[id]}`
+            : votou ? `Voto de ${participante.name} enviado e oculto` : `${participante.name} ainda não votou`);
+
+        const faces = document.createElement('span');
+        faces.className = 'faces-carta';
+        const verso = document.createElement('span');
+        verso.className = 'verso-carta';
+        verso.setAttribute('aria-hidden', 'true');
+        verso.textContent = votou ? 'PP' : '...';
+        const frente = document.createElement('span');
+        frente.className = 'frente-carta';
+        frente.textContent = Object.hasOwn(votosRevelados, id) ? votosRevelados[id] : '–';
+        faces.append(verso, frente);
+        carta.appendChild(faces);
+        assento.append(nome, estado, carta);
+        assentosMesa.appendChild(assento);
+    });
 }
 
 function mostrarVotos(votos) {
-    resultadosVotos.replaceChildren();
     const entradas = Object.entries(votos || {});
-    const votosOrdenados = entradas.sort(([primeiro], [segundo]) => {
-        const nomePrimeiro = participantes[primeiro]?.name || 'Participante';
-        const nomeSegundo = participantes[segundo]?.name || 'Participante';
-        return nomePrimeiro.localeCompare(nomeSegundo, 'pt-BR');
-    });
-
-    votosOrdenados.forEach(([id, valor]) => {
-        const linha = document.createElement('div');
-        linha.className = 'resultado-voto';
-        const nome = document.createElement('span');
-        nome.textContent = participantes[id]?.name || 'Participante';
-        const voto = document.createElement('strong');
-        voto.textContent = valor;
-        linha.append(nome, voto);
-        resultadosVotos.appendChild(linha);
-    });
+    votosRevelados = Object.fromEntries(entradas);
+    desenharAssentos();
 
     const votosNumericos = entradas
         .map(([, valor]) => String(valor))
@@ -183,14 +258,13 @@ function mostrarVotos(votos) {
     mediaVotos.textContent = media === null
         ? 'Média: sem votos numéricos (cartas ? e ☕ não entram no cálculo).'
         : `Média: ${media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos (${votosNumericos.length} votos numéricos; ? e ☕ não entram no cálculo).`;
-    resultadosVotos.hidden = false;
     mediaVotos.hidden = false;
 }
 
 async function sincronizarResultados() {
     if (!revelado) {
-        resultadosVotos.hidden = true;
-        resultadosVotos.replaceChildren();
+        votosRevelados = {};
+        desenharAssentos();
         mediaVotos.hidden = true;
         mediaVotos.textContent = '';
         return;
@@ -281,6 +355,7 @@ async function carregarMetadataOuReivindicarSala() {
         throw new Error('Os metadados da sala estão incompletos.');
     }
     document.getElementById('codigo-sala').textContent = metadataSala.name;
+    nomeMesa.textContent = metadataSala.name;
 
     const estadoSnapshot = await get(ref(database, `${caminhoSala}/state`));
     if (!estadoSnapshot.exists() && isDono()) {
@@ -377,6 +452,7 @@ formularioEntrada.addEventListener('submit', entrarNaSala);
 botaoRevelar.addEventListener('click', revelarVotos);
 botaoNovaRodada.addEventListener('click', iniciarNovaRodada);
 configurarCartas();
+window.addEventListener('resize', desenharAssentos);
 
 const configuracaoValida = Object.values(firebaseConfig).every(valor =>
     typeof valor === 'string' && valor.length > 0 && !valor.includes('COLOQUE_')
