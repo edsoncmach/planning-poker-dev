@@ -18,7 +18,7 @@ Aplicação estática para estimativa colaborativa. Cada pessoa entra com um nom
 				"participants": {
 					".read": "auth != null",
 					"$uid": {
-						".write": "auth != null && auth.uid === $uid"
+						".write": "auth != null && auth.uid == $uid"
 					}
 				},
 				"state": {
@@ -28,9 +28,9 @@ Aplicação estática para estimativa colaborativa. Cada pessoa entra com um nom
 				"rounds": {
 					"$round": {
 						"votes": {
-							".read": "auth != null && root.child('rooms').child($roomId).child('state').child('round').val() === $round && root.child('rooms').child($roomId).child('state').child('revealed').val() === true",
+							".read": "auth != null && root.child('rooms').child($roomId).child('state').child('round').val() == $round && root.child('rooms').child($roomId).child('state').child('revealed').val() == true",
 							"$uid": {
-								".write": "auth != null && auth.uid === $uid"
+								".write": "auth != null && auth.uid == $uid"
 							}
 						}
 					}
