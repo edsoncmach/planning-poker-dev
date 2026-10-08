@@ -167,6 +167,8 @@ function desenharAssentos() {
     const quantidade = itens.length;
     const votosEnviados = itens.filter(([, participante]) => participante.votedRound === rodadaAtual).length;
     const mobile = window.matchMedia('(max-width: 600px)').matches;
+    arenaMesa.classList.toggle('equipe-pequena', quantidade > 0 && quantidade <= 6);
+    arenaMesa.classList.toggle('equipe-cheia', quantidade > 4 && quantidade <= 6);
     arenaMesa.classList.toggle('compacta', quantidade > 7 && quantidade <= 12);
     arenaMesa.classList.toggle('densa', quantidade > 12);
     assentosMesa.dataset.quantidade = String(quantidade);
@@ -177,7 +179,18 @@ function desenharAssentos() {
     itens.forEach(([id, participante], indice) => {
         let x;
         let y;
-        if (quantidade > 12) {
+        if (quantidade <= 6) {
+            const lado = indice % 2;
+            const lugar = Math.floor(indice / 2);
+            const lugaresNesteLado = lado === 0
+                ? Math.ceil(quantidade / 2)
+                : Math.floor(quantidade / 2);
+            const posicoesVerticais = lugaresNesteLado === 3
+                ? [18, 50, 82]
+                : lugaresNesteLado === 2 ? [32, 68] : [50];
+            x = mobile ? (lado === 0 ? 15 : 85) : (lado === 0 ? 8 : 92);
+            y = posicoesVerticais[lugar];
+        } else if (quantidade > 12) {
             const lugaresPorLado = Math.ceil(quantidade / 4);
             const lado = Math.floor(indice / lugaresPorLado);
             const lugar = indice % lugaresPorLado;
@@ -204,7 +217,7 @@ function desenharAssentos() {
             const angulo = -Math.PI / 2 + (2 * Math.PI * indice) / quantidade;
             const normalizador = Math.max(Math.abs(Math.cos(angulo)), Math.abs(Math.sin(angulo)));
             const raioHorizontal = mobile ? 38 : 43;
-            const raioVertical = mobile ? 28 : 38;
+            const raioVertical = mobile ? 24 : 32;
             x = 50 + (Math.cos(angulo) / normalizador) * raioHorizontal;
             y = 50 + (Math.sin(angulo) / normalizador) * raioVertical;
         }

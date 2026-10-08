@@ -23,7 +23,7 @@ body {
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
-    padding: 40px 24px 64px;
+    padding: 14px 24px 12px;
     background-color: var(--paper);
     background-image: radial-gradient(#cbd8d0 0.65px, transparent 0.65px);
     background-size: 18px 18px;
@@ -64,8 +64,8 @@ input:focus-visible {
 
 .cabecalho {
     justify-content: space-between;
-    gap: 24px;
-    padding-bottom: 26px;
+    gap: 18px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--line);
 }
 
@@ -86,7 +86,7 @@ p {
 
 h1 {
     margin-bottom: 0;
-    font-size: 42px;
+    font-size: 32px;
     line-height: 1.05;
 }
 
@@ -101,7 +101,7 @@ h2 {
     justify-content: flex-end;
     gap: 8px 12px;
     max-width: 280px;
-    padding: 12px 14px;
+    padding: 8px 12px;
     border: 1px solid var(--line);
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.74);
@@ -119,7 +119,7 @@ h2 {
 }
 
 .btn-icon {
-    padding: 7px 10px;
+    padding: 6px 9px;
     border: 1px solid var(--line);
     border-radius: 4px;
     background: var(--surface);
@@ -132,8 +132,8 @@ h2 {
 }
 
 .mensagem-status {
-    min-height: 22px;
-    margin: 16px 0 22px;
+    min-height: 18px;
+    margin: 8px 0 12px;
     color: var(--muted);
     font: 14px 'Trebuchet MS', Arial, sans-serif;
 }
@@ -222,10 +222,10 @@ input {
 }
 
 .barra-sala {
-    min-height: 112px;
+    min-height: 0;
     justify-content: space-between;
-    gap: 24px;
-    padding: 20px 0;
+    gap: 12px;
+    padding: 5px 0;
     border-bottom: 1px solid var(--line);
 }
 
@@ -261,7 +261,7 @@ input {
 }
 
 .mesa-de-votos {
-    margin: 28px 0 34px;
+    margin: 12px 0 16px;
 }
 
 .mesa-cabecalho,
@@ -277,7 +277,7 @@ input {
 }
 
 .status-mesa {
-    margin: 22px 0 12px;
+    margin: 4px 0;
     color: var(--muted);
     font: 14px 'Trebuchet MS', Arial, sans-serif;
 }
@@ -289,8 +289,9 @@ input {
 .arena-mesa {
     position: relative;
     z-index: 0;
-    min-height: 740px;
-    margin: 26px 0 10px;
+    height: clamp(280px, 36vh, 340px);
+    min-height: 280px;
+    margin: 7px 0 3px;
     overflow: hidden;
     border: 1px solid #d2d6ca;
     border-radius: 12px;
@@ -308,13 +309,13 @@ input {
     top: 50%;
     left: 50%;
     display: flex;
-    width: min(42%, 430px);
+    width: min(27%, 260px);
     aspect-ratio: 1;
     height: auto;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    padding: 24px 34px;
+    padding: 18px 24px;
     transform: translate(-50%, -50%);
     border: 10px solid #8a5b32;
     border-radius: 24px;
@@ -338,7 +339,7 @@ input {
 }
 
 .superficie-mesa .sobretitulo {
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     color: #62452b;
 }
 
@@ -351,14 +352,14 @@ input {
 }
 
 .resumo-mesa {
-    margin: 10px 0 0;
+    margin: 5px 0 0;
     color: #48594e;
     font: 13px 'Trebuchet MS', Arial, sans-serif;
 }
 
 .media-mesa {
     max-width: 92%;
-    margin: 12px 0 0;
+    margin: 6px 0 0;
     color: #294c3b;
     font: 700 13px/1.4 'Trebuchet MS', Arial, sans-serif;
 }
@@ -374,10 +375,10 @@ input {
     top: var(--seat-y);
     left: var(--seat-x);
     display: flex;
-    width: 124px;
+    width: 100px;
     align-items: center;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
     transform: translate(-50%, -50%);
     text-align: center;
 }
@@ -398,7 +399,7 @@ input {
 .nome-assento {
     display: -webkit-box;
     width: 100%;
-    min-height: 32px;
+    min-height: 26px;
     margin: 0;
     overflow: hidden;
     color: var(--ink);
@@ -410,7 +411,7 @@ input {
 }
 
 .estado-assento {
-    min-height: 14px;
+    min-height: 12px;
     color: #65726b;
     font: 10px/1.2 'Trebuchet MS', Arial, sans-serif;
 }
@@ -421,8 +422,8 @@ input {
 }
 
 .carta-mesa {
-    width: 68px;
-    height: 96px;
+    width: 48px;
+    height: 68px;
     perspective: 700px;
 }
 
@@ -449,7 +450,7 @@ input {
     border: 2px solid #f0d79e;
     border-radius: 7px;
     box-shadow: 0 4px 8px rgba(31, 48, 45, 0.22);
-    font: 700 25px Georgia, 'Times New Roman', serif;
+    font: 700 21px Georgia, 'Times New Roman', serif;
 }
 
 .verso-carta {
@@ -478,20 +479,57 @@ input {
 }
 
 .arena-mesa.compacta {
-    min-height: 820px;
+    height: clamp(380px, 50vh, 470px);
+    min-height: 380px;
 }
 
 .arena-mesa.densa {
-    min-height: 960px;
+    height: clamp(500px, 65vh, 640px);
+    min-height: 500px;
+}
+
+.arena-mesa.equipe-pequena {
+    height: clamp(255px, 34vh, 300px);
+    min-height: 255px;
+}
+
+.arena-mesa.equipe-cheia {
+    height: clamp(320px, 42vh, 360px);
+    min-height: 320px;
+}
+
+.arena-mesa.equipe-cheia .assento-mesa {
+    width: 78px;
+    gap: 2px;
+}
+
+.arena-mesa.equipe-cheia .nome-assento {
+    min-height: 22px;
+    font-size: 10px;
+}
+
+.arena-mesa.equipe-cheia .estado-assento {
+    min-height: 10px;
+    font-size: 9px;
+}
+
+.arena-mesa.equipe-cheia .carta-mesa {
+    width: 40px;
+    height: 56px;
+}
+
+.arena-mesa.equipe-cheia .verso-carta,
+.arena-mesa.equipe-cheia .frente-carta {
+    font-size: 17px;
 }
 
 .arena-mesa.compacta .assento-mesa {
-    width: 104px;
+    width: 86px;
 }
 
 .arena-mesa.compacta .carta-mesa {
-    width: 58px;
-    height: 82px;
+    width: 46px;
+    height: 64px;
 }
 
 .arena-mesa.compacta .verso-carta,
@@ -520,13 +558,13 @@ input {
 }
 
 .controles-mesa {
-    padding: 8px 0 0;
+    padding: 2px 0 0;
 }
 
 .acoes {
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 20px;
+    gap: 6px;
+    margin-top: 8px;
 }
 
 .aviso-dono {
@@ -535,13 +573,13 @@ input {
 }
 
 .deck-cabecalho {
-    margin-bottom: 17px;
+    margin-bottom: 8px;
 }
 
 .cartas {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
-    gap: 10px;
+    gap: 7px;
 }
 
 .carta {
@@ -574,34 +612,67 @@ input {
 
 @media (max-width: 600px) {
     body {
-        padding: 24px 16px 40px;
+        padding: 12px 14px 16px;
     }
 
     h1 {
-        font-size: 34px;
+        font-size: 28px;
     }
 
     .cabecalho {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 18px;
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+        padding-bottom: 10px;
     }
 
     .sala-compartilhada {
-        justify-content: flex-start;
-        width: 100%;
-        max-width: none;
+        justify-content: flex-end;
+        width: auto;
+        max-width: 155px;
+        gap: 5px 8px;
+        padding: 6px 8px;
+    }
+
+    .sala-compartilhada > span {
+        font-size: 9px;
+    }
+
+    .sala-compartilhada strong {
+        max-width: 95px;
+        font-size: 11px;
+    }
+
+    .btn-icon {
+        padding: 5px 7px;
+        font-size: 10px;
+    }
+
+    .mensagem-status {
+        min-height: 16px;
+        margin: 6px 0 8px;
+        font-size: 12px;
     }
 
     .painel-entrada {
-        margin-top: 28px;
-        padding: 22px 18px;
+        margin-top: 20px;
+        padding: 18px 15px;
     }
 
     .barra-sala {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 14px;
+        align-items: center;
+        flex-direction: row;
+        gap: 8px;
+        padding: 5px 0;
+    }
+
+    .barra-sala h2 {
+        font-size: 18px;
+    }
+
+    .barra-sala .sobretitulo {
+        margin-bottom: 2px;
+        font-size: 9px;
     }
 
     .lista-participantes {
@@ -610,12 +681,13 @@ input {
     }
 
     .arena-mesa {
-        min-height: 700px;
-        margin-top: 20px;
+        height: clamp(300px, 40vh, 360px);
+        min-height: 300px;
+        margin-top: 7px;
     }
 
     .superficie-mesa {
-        width: min(48%, 300px);
+        width: min(48%, 230px);
         min-height: 0;
         padding: 12px 14px;
         border-width: 9px;
@@ -624,6 +696,40 @@ input {
 
     .assento-mesa {
         width: 70px;
+    }
+
+    .arena-mesa.equipe-pequena {
+        height: clamp(260px, 36vh, 300px);
+        min-height: 260px;
+    }
+
+    .arena-mesa.equipe-cheia {
+        height: 350px;
+        min-height: 350px;
+    }
+
+    .arena-mesa.equipe-cheia .assento-mesa {
+        width: 58px;
+    }
+
+    .arena-mesa.equipe-cheia .carta-mesa {
+        width: 34px;
+        height: 48px;
+    }
+
+    .arena-mesa.equipe-cheia .verso-carta,
+    .arena-mesa.equipe-cheia .frente-carta {
+        font-size: 15px;
+    }
+
+    .arena-mesa.compacta {
+        height: clamp(380px, 50vh, 470px);
+        min-height: 380px;
+    }
+
+    .arena-mesa.densa {
+        height: clamp(500px, 65vh, 640px);
+        min-height: 500px;
     }
 
     .superficie-mesa .sobretitulo {
@@ -649,22 +755,14 @@ input {
         margin-top: 6px;
     }
 
-    .arena-mesa.compacta {
-        min-height: 820px;
-    }
-
-    .arena-mesa.densa {
-        min-height: 1080px;
-    }
-
     .carta-mesa {
-        width: 56px;
-        height: 80px;
+        width: 48px;
+        height: 68px;
     }
 
     .verso-carta,
     .frente-carta {
-        font-size: 21px;
+        font-size: 18px;
     }
 
     .arena-mesa.compacta .assento-mesa {
@@ -690,12 +788,54 @@ input {
     }
 
     .mesa-cabecalho {
-        align-items: flex-start;
-        flex-direction: column;
+        align-items: flex-end;
+        flex-direction: row;
+    }
+
+    .mesa-cabecalho h2 {
+        font-size: 20px;
+    }
+
+    .mesa-cabecalho .sobretitulo {
+        margin-bottom: 3px;
+        font-size: 9px;
+    }
+
+    .status-votos {
+        font-size: 11px;
+    }
+
+    .status-mesa {
+        margin: 5px 0;
+        font-size: 12px;
+    }
+
+    .acoes {
+        margin-top: 6px;
+    }
+
+    .acoes .btn {
+        min-height: 36px;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .deck-cabecalho {
+        margin-bottom: 6px;
+    }
+
+    .deck-cabecalho h2 {
+        font-size: 18px;
     }
 
     .cartas {
-        grid-template-columns: repeat(4, minmax(54px, 1fr));
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .carta {
+        border-radius: 4px;
+        font-size: 19px;
     }
 
     .linha-entrada {
