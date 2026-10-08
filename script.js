@@ -148,7 +148,10 @@ function conectarSala() {
             rodadaAtual = proximaRodada;
             votoSelecionado = null;
             document.getElementById('voto-atual').textContent = 'Nenhum';
-            document.querySelectorAll('.carta').forEach(carta => carta.classList.remove('selecionada'));
+            document.querySelectorAll('.carta').forEach(carta => {
+                carta.classList.remove('selecionada');
+                carta.setAttribute('aria-pressed', 'false');
+            });
             registrarLimpezaAoDesconectar();
         }
         revelado = estado.revealed === true;
