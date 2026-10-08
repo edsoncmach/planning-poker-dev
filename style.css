@@ -287,6 +287,15 @@ input {
     color: var(--ink);
 }
 
+.media-votos {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--gold);
+    background: #fff8e8;
+    color: var(--ink);
+    font: 700 14px/1.5 'Trebuchet MS', Arial, sans-serif;
+}
+
 .resultados-votos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
@@ -320,6 +329,11 @@ input {
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 20px;
+}
+
+.aviso-dono {
+    color: var(--muted);
+    font: 12px/1.4 'Trebuchet MS', Arial, sans-serif;
 }
 
 .deck-cabecalho {

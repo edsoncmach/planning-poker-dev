@@ -15,12 +15,17 @@ import {
 } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js';
 
 const valoresCartas = ['0', '1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?', '☕'];
+const valoresNumericos = new Set(valoresCartas.filter(valor => Number.isFinite(Number(valor))));
 const parametrosUrl = new URLSearchParams(window.location.search);
-const salaInformada = parametrosUrl.get('room') || 'equipe';
-const salaId = /^[a-zA-Z0-9_-]{1,40}$/.test(salaInformada) ? salaInformada.toLowerCase() : 'equipe';
-const caminhoSala = `rooms/${salaId}`;
+const salaInformada = parametrosUrl.get('room');
+let salaId = salaInformada && /^[a-zA-Z0-9_-]{1,40}$/.test(salaInformada) ? salaInformada.toLowerCase() : null;
+let caminhoSala = salaId ? `rooms/${salaId}` : null;
 const containerCartas = document.getElementById('container-cartas');
-const formEntrada = document.getElementById('form-entrada');
+const painelCriacao = document.getElementById('painel-criacao');
+const formularioCriacao = document.getElementById('form-criar-sala');
+const campoNomeSala = document.getElementById('nome-sala');
+const botaoCriarSala = document.getElementById('btn-criar-sala');
+const formularioEntrada = document.getElementById('form-entrada');
 const campoNome = document.getElementById('nome-participante');
 const mensagemStatus = document.getElementById('mensagem-status');
 const painelEntrada = document.getElementById('painel-entrada');
@@ -28,23 +33,84 @@ const painelJogo = document.getElementById('painel-jogo');
 const botaoEntrar = document.getElementById('btn-entrar');
 const listaParticipantes = document.getElementById('lista-participantes');
 const resultadosVotos = document.getElementById('resultados-votos');
+const mediaVotos = document.getElementById('media-votos');
 const botaoRevelar = document.getElementById('btn-revelar');
 const botaoNovaRodada = document.getElementById('btn-limpar');
+const avisoDono = document.getElementById('aviso-dono');
+const caixaSala = document.getElementById('sala-compartilhada');
 let database;
 let participanteId;
 let nomeParticipante = '';
+let metadataSala = null;
 let participantes = {};
 let revelado = false;
 let rodadaAtual = 1;
-let votoSelecionado = null;
 let ouvintesConectados = false;
 
-document.getElementById('codigo-sala').textContent = salaId;
-campoNome.value = sessionStorage.getItem(`planning-poker-name-${salaId}`) || '';
+painelCriacao.hidden = Boolean(salaId);
+painelEntrada.hidden = !salaId;
+caixaSala.hidden = !salaId;
+if (salaId) {
+    document.getElementById('codigo-sala').textContent = salaId;
+    campoNome.value = sessionStorage.getItem(`planning-poker-name-${salaId}`) || '';
+} else {
+    document.getElementById('codigo-sala').textContent = 'Nova sala';
+}
 
-if (salaInformada !== salaId || !parametrosUrl.has('room')) {
-    parametrosUrl.set('room', salaId);
+function atualizarStatus(mensagem, erro = false) {
+    mensagemStatus.textContent = mensagem;
+    mensagemStatus.classList.toggle('erro', erro);
+}
+
+function definirSala(id, nome) {
+    salaId = id;
+    caminhoSala = `rooms/${id}`;
+    metadataSala = { ...(metadataSala || {}), name: nome };
+    parametrosUrl.set('room', id);
     history.replaceState(null, '', `${window.location.pathname}?${parametrosUrl.toString()}`);
+    document.getElementById('codigo-sala').textContent = nome;
+    caixaSala.hidden = false;
+    campoNome.value = sessionStorage.getItem(`planning-poker-name-${salaId}`) || '';
+}
+
+function criarIdSala(nome) {
+    const slug = nome.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .slice(0, 28) || 'sala';
+    const aleatorio = Array.from(crypto.getRandomValues(new Uint8Array(3)))
+        .map(valor => valor.toString(16).padStart(2, '0'))
+        .join('');
+    return `${slug}-${aleatorio}`;
+}
+
+async function criarSala(evento) {
+    evento.preventDefault();
+    const nomeSala = campoNomeSala.value.trim();
+    if (!nomeSala || !participanteId) return;
+
+    const id = criarIdSala(nomeSala);
+    const novoCaminhoSala = `rooms/${id}`;
+    try {
+        await set(ref(database, `${novoCaminhoSala}/meta`), {
+            owner: participanteId,
+            name: nomeSala
+        });
+        await set(ref(database, `${novoCaminhoSala}/state`), {
+            revealed: false,
+            round: '1'
+        });
+        definirSala(id, nomeSala);
+        metadataSala.owner = participanteId;
+        painelCriacao.hidden = true;
+        painelEntrada.hidden = false;
+        atualizarStatus('Sala criada. Informe seu nome para entrar como dono.');
+    } catch (erro) {
+        atualizarStatus('Não foi possível criar a sala. Confira as regras atualizadas do Firebase.', true);
+        console.error(erro);
+    }
 }
 
 function configurarCartas() {
@@ -54,15 +120,11 @@ function configurarCartas() {
         carta.className = 'carta';
         carta.textContent = valor;
         carta.setAttribute('aria-label', `Votar ${valor}`);
+        carta.setAttribute('aria-pressed', 'false');
         carta.disabled = true;
         carta.addEventListener('click', () => enviarVoto(valor));
         containerCartas.appendChild(carta);
     });
-}
-
-function atualizarStatus(mensagem, erro = false) {
-    mensagemStatus.textContent = mensagem;
-    mensagemStatus.classList.toggle('erro', erro);
 }
 
 function desenharParticipantes() {
@@ -75,7 +137,8 @@ function desenharParticipantes() {
         const item = document.createElement('li');
         item.className = 'participante';
         const nome = document.createElement('span');
-        nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}`;
+        const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
+        nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
         const estado = document.createElement('span');
         const votou = participante.votedRound === rodadaAtual;
         estado.className = votou ? 'estado-voto votou' : 'estado-voto';
@@ -92,7 +155,8 @@ function desenharParticipantes() {
 
 function mostrarVotos(votos) {
     resultadosVotos.replaceChildren();
-    const votosOrdenados = Object.entries(votos || {}).sort(([primeiro], [segundo]) => {
+    const entradas = Object.entries(votos || {});
+    const votosOrdenados = entradas.sort(([primeiro], [segundo]) => {
         const nomePrimeiro = participantes[primeiro]?.name || 'Participante';
         const nomeSegundo = participantes[segundo]?.name || 'Participante';
         return nomePrimeiro.localeCompare(nomeSegundo, 'pt-BR');
@@ -109,13 +173,26 @@ function mostrarVotos(votos) {
         resultadosVotos.appendChild(linha);
     });
 
+    const votosNumericos = entradas
+        .map(([, valor]) => String(valor))
+        .filter(valor => valoresNumericos.has(valor))
+        .map(Number);
+    const media = votosNumericos.length
+        ? votosNumericos.reduce((soma, valor) => soma + valor, 0) / votosNumericos.length
+        : null;
+    mediaVotos.textContent = media === null
+        ? 'Média: sem votos numéricos (cartas ? e ☕ não entram no cálculo).'
+        : `Média: ${media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos (${votosNumericos.length} votos numéricos; ? e ☕ não entram no cálculo).`;
     resultadosVotos.hidden = false;
+    mediaVotos.hidden = false;
 }
 
 async function sincronizarResultados() {
     if (!revelado) {
         resultadosVotos.hidden = true;
         resultadosVotos.replaceChildren();
+        mediaVotos.hidden = true;
+        mediaVotos.textContent = '';
         return;
     }
 
@@ -146,7 +223,6 @@ function conectarSala() {
         const proximaRodada = Number(estado.round) || 1;
         if (proximaRodada !== rodadaAtual) {
             rodadaAtual = proximaRodada;
-            votoSelecionado = null;
             document.getElementById('voto-atual').textContent = 'Nenhum';
             document.querySelectorAll('.carta').forEach(carta => {
                 carta.classList.remove('selecionada');
@@ -155,6 +231,9 @@ function conectarSala() {
             registrarLimpezaAoDesconectar();
         }
         revelado = estado.revealed === true;
+        botaoRevelar.hidden = !isDono();
+        botaoNovaRodada.hidden = !isDono();
+        avisoDono.hidden = isDono();
         botaoRevelar.disabled = revelado;
         botaoRevelar.textContent = revelado ? 'Votos revelados' : 'Revelar votos';
         document.querySelectorAll('.carta').forEach(carta => {
@@ -166,6 +245,10 @@ function conectarSala() {
         atualizarStatus('Não foi possível ler o estado da rodada. Confira as regras do Firebase.', true);
         console.error(erro);
     });
+}
+
+function isDono() {
+    return metadataSala?.owner === participanteId;
 }
 
 async function registrarLimpezaAoDesconectar() {
@@ -180,13 +263,39 @@ async function registrarLimpezaAoDesconectar() {
     }
 }
 
+async function carregarMetadataOuReivindicarSala() {
+    const metadataRef = ref(database, `${caminhoSala}/meta`);
+    let snapshot = await get(metadataRef);
+    if (!snapshot.exists()) {
+        try {
+            await set(metadataRef, { owner: participanteId, name: salaId });
+            snapshot = await get(metadataRef);
+        } catch (erro) {
+            snapshot = await get(metadataRef);
+            if (!snapshot.exists()) throw erro;
+        }
+    }
+
+    metadataSala = snapshot.val();
+    if (!metadataSala?.owner || !metadataSala?.name) {
+        throw new Error('Os metadados da sala estão incompletos.');
+    }
+    document.getElementById('codigo-sala').textContent = metadataSala.name;
+
+    const estadoSnapshot = await get(ref(database, `${caminhoSala}/state`));
+    if (!estadoSnapshot.exists() && isDono()) {
+        await set(ref(database, `${caminhoSala}/state`), { revealed: false, round: '1' });
+    }
+}
+
 async function entrarNaSala(evento) {
     evento.preventDefault();
     nomeParticipante = campoNome.value.trim();
-    if (!nomeParticipante || !participanteId) return;
+    if (!nomeParticipante || !participanteId || !caminhoSala) return;
 
     const participanteRef = ref(database, `${caminhoSala}/participants/${participanteId}`);
     try {
+        await carregarMetadataOuReivindicarSala();
         await registrarLimpezaAoDesconectar();
         const atual = await get(participanteRef);
         await update(participanteRef, {
@@ -202,7 +311,7 @@ async function entrarNaSala(evento) {
         conectarSala();
         atualizarStatus('Você entrou na sala. Escolha uma carta para votar.');
     } catch (erro) {
-        atualizarStatus('Não foi possível entrar. Confira a configuração e as regras do Firebase.', true);
+        atualizarStatus('Não foi possível entrar. Confira as regras de sala e participantes no Firebase.', true);
         console.error(erro);
     }
 }
@@ -210,7 +319,6 @@ async function entrarNaSala(evento) {
 async function enviarVoto(valor) {
     if (!participanteId || revelado) return;
 
-    votoSelecionado = valor;
     document.getElementById('voto-atual').textContent = valor;
     document.querySelectorAll('.carta').forEach(carta => {
         carta.classList.toggle('selecionada', carta.textContent === valor);
@@ -230,20 +338,19 @@ async function enviarVoto(valor) {
 }
 
 async function revelarVotos() {
-    if (!participanteId) return;
+    if (!isDono()) return;
     try {
         await set(ref(database, `${caminhoSala}/state`), { revealed: true, round: String(rodadaAtual) });
     } catch (erro) {
-        atualizarStatus('Não foi possível revelar os votos. Confira as regras do Firebase.', true);
+        atualizarStatus('Não foi possível revelar os votos. Somente o dono pode controlar a rodada.', true);
         console.error(erro);
     }
 }
 
 async function iniciarNovaRodada() {
-    if (!participanteId) return;
+    if (!isDono()) return;
     try {
         await set(ref(database, `${caminhoSala}/state`), { revealed: false, round: String(rodadaAtual + 1) });
-        votoSelecionado = null;
         document.getElementById('voto-atual').textContent = 'Nenhum';
         document.querySelectorAll('.carta').forEach(carta => {
             carta.classList.remove('selecionada');
@@ -251,7 +358,7 @@ async function iniciarNovaRodada() {
         });
         atualizarStatus('Nova rodada iniciada.');
     } catch (erro) {
-        atualizarStatus('Não foi possível iniciar a rodada. Confira as regras do Firebase.', true);
+        atualizarStatus('Não foi possível iniciar a rodada. Somente o dono pode controlar a rodada.', true);
         console.error(erro);
     }
 }
@@ -265,7 +372,8 @@ document.getElementById('btn-copiar-link').addEventListener('click', async () =>
     }
 });
 
-formEntrada.addEventListener('submit', entrarNaSala);
+formularioCriacao.addEventListener('submit', criarSala);
+formularioEntrada.addEventListener('submit', entrarNaSala);
 botaoRevelar.addEventListener('click', revelarVotos);
 botaoNovaRodada.addEventListener('click', iniciarNovaRodada);
 configurarCartas();
@@ -284,7 +392,8 @@ if (!configuracaoValida) {
         signInAnonymously(autenticacao).then(credencial => {
             participanteId = credencial.user.uid;
             botaoEntrar.disabled = false;
-            atualizarStatus('Conexão pronta. Informe seu nome para entrar.');
+            botaoCriarSala.disabled = false;
+            atualizarStatus(salaId ? 'Conexão pronta. Informe seu nome para entrar.' : 'Conexão pronta. Crie uma sala para começar.');
         }).catch(erro => {
             atualizarStatus('Falha na autenticação anônima. Ative esse provedor no Firebase.', true);
             console.error(erro);

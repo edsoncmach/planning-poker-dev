@@ -16,9 +16,9 @@
                 <p class="sobretitulo">Estimativa colaborativa</p>
                 <h1>Planning Poker</h1>
             </div>
-            <div class="sala-compartilhada">
+            <div id="sala-compartilhada" class="sala-compartilhada" hidden>
                 <span>SALA</span>
-                <strong id="codigo-sala">equipe</strong>
+                <strong id="codigo-sala"></strong>
                 <button id="btn-copiar-link" class="btn-icon" type="button" aria-label="Copiar link da sala"
                     title="Copiar link da sala">Copiar link</button>
             </div>
@@ -27,6 +27,19 @@
         <p id="mensagem-status" class="mensagem-status" role="status" aria-live="polite">Conectando à sala...</p>
 
         <main>
+            <section id="painel-criacao" class="painel-entrada" hidden>
+                <h2>Criar sala</h2>
+                <p>Dê à sala o nome da sprint ou funcionalidade que o time vai estimar.</p>
+                <form id="form-criar-sala">
+                    <label for="nome-sala">Nome da sala</label>
+                    <div class="linha-entrada">
+                        <input id="nome-sala" name="roomName" type="text" maxlength="60"
+                            placeholder="Ex.: Sprint 24 ou Checkout" required>
+                        <button id="btn-criar-sala" class="btn primary" type="submit" disabled>Criar sala</button>
+                    </div>
+                </form>
+            </section>
+
             <section id="painel-entrada" class="painel-entrada">
                 <h2>Entre na sala</h2>
                 <p>Escolha como seu nome aparecerá para o time.</p>
@@ -60,9 +73,11 @@
 
                     <p class="status-mesa">Seu voto: <strong id="voto-atual">Nenhum</strong></p>
                     <div id="resultados-votos" class="resultados-votos" aria-live="polite" hidden></div>
+                    <p id="media-votos" class="media-votos" aria-live="polite" hidden></p>
                     <div class="acoes">
                         <button id="btn-revelar" class="btn primary" type="button">Revelar votos</button>
                         <button id="btn-limpar" class="btn secondary" type="button">Nova rodada</button>
+                        <span id="aviso-dono" class="aviso-dono" hidden>Somente o dono da sala controla a rodada.</span>
                     </div>
                 </section>
 
