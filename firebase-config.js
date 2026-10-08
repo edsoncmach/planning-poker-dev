@@ -1,9 +1,10 @@
 export const firebaseConfig = {
-    apiKey: 'COLOQUE_SUA_API_KEY',
-    authDomain: 'COLOQUE_SEU_PROJETO.firebaseapp.com',
-    databaseURL: 'https://COLOQUE_SEU_PROJETO-default-rtdb.firebaseio.com',
-    projectId: 'COLOQUE_SEU_PROJETO',
-    storageBucket: 'COLOQUE_SEU_PROJETO.firebasestorage.app',
-    messagingSenderId: 'COLOQUE_SEU_SENDER_ID',
-    appId: 'COLOQUE_SEU_APP_ID'
+  apiKey: "AIzaSyB9fpwFEQBKlvLChQKg3vSG43XXbEvvklo",
+  authDomain: "planing-poker-dev.firebaseapp.com",
+  databaseURL: "https://planing-poker-dev-default-rtdb.firebaseio.com",
+  projectId: "planing-poker-dev",
+  storageBucket: "planing-poker-dev.firebasestorage.app",
+  messagingSenderId: "358212973760",
+  appId: "1:358212973760:web:5345d65f5fca7e864a2925",
+  measurementId: "G-86MWG39GW2"
 };
