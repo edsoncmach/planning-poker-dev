@@ -267,6 +267,7 @@ input {
 
 .mesa-de-votos {
     margin: 12px 0 16px;
+    padding: 12px 14px 14px;
 }
 
 .mesa-cabecalho,
@@ -296,7 +297,7 @@ input {
     z-index: 0;
     height: clamp(280px, 36vh, 340px);
     min-height: 280px;
-    margin: 7px 0 3px;
+    margin: 10px 2px 8px;
     overflow: hidden;
     border: 1px solid #d2d6ca;
     border-radius: 12px;
@@ -495,8 +496,8 @@ input {
 }
 
 .arena-mesa.equipe-pequena {
-    height: clamp(255px, 34vh, 300px);
-    min-height: 255px;
+    height: clamp(230px, 31vh, 275px);
+    min-height: 230px;
 }
 
 .arena-mesa.equipe-cheia {
@@ -665,6 +666,11 @@ input {
         padding: 18px 15px;
     }
 
+    .mesa-de-votos {
+        margin: 8px 0 10px;
+        padding: 9px 9px 11px;
+    }
+
     .barra-sala {
         align-items: center;
         flex-direction: row;
@@ -689,7 +695,7 @@ input {
     .arena-mesa {
         height: clamp(300px, 40vh, 360px);
         min-height: 300px;
-        margin-top: 7px;
+        margin: 9px 1px 7px;
     }
 
     .superficie-mesa {
