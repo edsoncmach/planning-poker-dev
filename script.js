@@ -186,9 +186,9 @@ function desenharAssentos() {
                 ? Math.ceil(quantidade / 2)
                 : Math.floor(quantidade / 2);
             const posicoesVerticais = lugaresNesteLado === 3
-                ? [18, 50, 82]
-                : lugaresNesteLado === 2 ? [32, 68] : [50];
-            x = mobile ? (lado === 0 ? 15 : 85) : (lado === 0 ? 8 : 92);
+                ? [25, 50, 75]
+                : lugaresNesteLado === 2 ? [35, 65] : [50];
+            x = mobile ? (lado === 0 ? 9 : 91) : (lado === 0 ? 22 : 78);
             y = posicoesVerticais[lugar];
         } else if (quantidade > 12) {
             const lugaresPorLado = Math.ceil(quantidade / 4);

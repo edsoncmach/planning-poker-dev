@@ -1,16 +1,19 @@
 :root {
     color-scheme: light;
-    --ink: #1f302d;
-    --muted: #61716c;
-    --paper: #f4f7f3;
+    --ink: #162a3a;
+    --muted: #607789;
+    --paper: #f2f6f8;
     --surface: #ffffff;
-    --line: #d9e1dc;
-    --green: #236b52;
-    --green-dark: #174c3a;
-    --green-soft: #e7f2ec;
-    --gold: #e9b44c;
-    --red: #a23b35;
-    font-family: Georgia, 'Times New Roman', serif;
+    --line: #d4e0e8;
+    --green: #087f8c;
+    --green-dark: #075b66;
+    --green-soft: #e3f5f6;
+    --gold: #c6ef5e;
+    --red: #bd4b52;
+    --table: #1b3041;
+    --table-edge: #0d1f2e;
+    --cyan: #51d6df;
+    font-family: 'Segoe UI Variable', 'Aptos', 'Trebuchet MS', sans-serif;
     color: var(--ink);
     background: var(--paper);
 }
@@ -25,8 +28,10 @@ body {
     margin: 0;
     padding: 14px 24px 12px;
     background-color: var(--paper);
-    background-image: radial-gradient(#cbd8d0 0.65px, transparent 0.65px);
-    background-size: 18px 18px;
+    background-image:
+        linear-gradient(rgba(24, 75, 102, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 75, 102, 0.035) 1px, transparent 1px);
+    background-size: 32px 32px;
 }
 
 button,
@@ -296,12 +301,12 @@ input {
     border: 1px solid #d2d6ca;
     border-radius: 12px;
     isolation: isolate;
-    background-color: #e8e6dc;
+    background-color: #edf3f6;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px),
-        radial-gradient(#c5c3b8 0.65px, transparent 0.65px);
-    background-size: 72px 72px, 72px 72px, 17px 17px;
+        linear-gradient(rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+        radial-gradient(#bdccd6 0.7px, transparent 0.7px);
+    background-size: 48px 48px, 48px 48px, 14px 14px;
 }
 
 .superficie-mesa {
@@ -309,38 +314,37 @@ input {
     top: 50%;
     left: 50%;
     display: flex;
-    width: min(27%, 260px);
-    aspect-ratio: 1;
-    height: auto;
+    width: min(43%, 440px);
+    height: 82%;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    padding: 18px 24px;
+    padding: 18px 28px;
     transform: translate(-50%, -50%);
-    border: 10px solid #8a5b32;
-    border-radius: 24px;
-    background-color: #c99a60;
+    border: 2px solid #3e6075;
+    border-radius: 22px;
+    background-color: var(--table);
     background-image:
-        linear-gradient(90deg, transparent 49.7%, rgba(104, 67, 35, 0.06) 50%, transparent 50.3%),
-        repeating-linear-gradient(0deg, transparent 0 13px, rgba(113, 73, 37, 0.08) 14px 15px),
-        linear-gradient(115deg, #dfb77e, #c99a60 56%, #d4a76d);
-    box-shadow: 0 10px 0 #684728, 0 26px 34px rgba(31, 48, 45, 0.2), inset 0 0 0 2px rgba(255, 236, 194, 0.45);
-    color: #263b32;
+        linear-gradient(90deg, transparent 49.7%, rgba(81, 214, 223, 0.12) 50%, transparent 50.3%),
+        repeating-linear-gradient(0deg, transparent 0 17px, rgba(81, 214, 223, 0.07) 18px 19px),
+        radial-gradient(ellipse at 50% 45%, #263e51, var(--table) 75%);
+    box-shadow: 0 8px 0 var(--table-edge), 0 18px 28px rgba(17, 42, 59, 0.2), inset 0 0 0 1px rgba(126, 188, 203, 0.22);
+    color: #f5fbfd;
     text-align: center;
 }
 
 .superficie-mesa::after {
     position: absolute;
-    inset: 9px;
-    border: 1px solid rgba(105, 70, 37, 0.27);
-    border-radius: 15px;
+    inset: 8px;
+    border: 1px solid rgba(81, 214, 223, 0.28);
+    border-radius: 14px;
     content: '';
     pointer-events: none;
 }
 
 .superficie-mesa .sobretitulo {
     margin-bottom: 5px;
-    color: #62452b;
+    color: var(--cyan);
 }
 
 .superficie-mesa h3 {
@@ -353,14 +357,14 @@ input {
 
 .resumo-mesa {
     margin: 5px 0 0;
-    color: #48594e;
+    color: #c5d7e0;
     font: 13px 'Trebuchet MS', Arial, sans-serif;
 }
 
 .media-mesa {
     max-width: 92%;
     margin: 6px 0 0;
-    color: #294c3b;
+    color: var(--gold);
     font: 700 13px/1.4 'Trebuchet MS', Arial, sans-serif;
 }
 
@@ -387,12 +391,12 @@ input {
     position: absolute;
     z-index: -1;
     top: 19px;
-    width: 82px;
-    height: 86px;
-    border: 1px solid rgba(96, 76, 48, 0.18);
-    border-radius: 15px 15px 22px 22px;
-    background: #d9c8a8;
-    box-shadow: 0 4px 0 #bca783;
+    width: 76px;
+    height: 74px;
+    border: 1px solid #c5d5df;
+    border-radius: 13px;
+    background: linear-gradient(145deg, #fff, #e4edf2);
+    box-shadow: 0 4px 0 #c4d3dc, 0 8px 16px rgba(28, 56, 75, 0.09);
     content: '';
 }
 
@@ -447,23 +451,25 @@ input {
     display: grid;
     place-items: center;
     backface-visibility: hidden;
-    border: 2px solid #f0d79e;
+    border: 1px solid #77dce2;
     border-radius: 7px;
     box-shadow: 0 4px 8px rgba(31, 48, 45, 0.22);
     font: 700 21px Georgia, 'Times New Roman', serif;
 }
 
 .verso-carta {
-    background-color: #28644e;
-    background-image: repeating-linear-gradient(45deg, transparent 0 7px, rgba(250, 234, 197, 0.16) 8px 9px);
-    color: #f3d99f;
+    background-color: #123448;
+    background-image:
+        linear-gradient(45deg, transparent 45%, rgba(81, 214, 223, 0.18) 46% 49%, transparent 50%),
+        repeating-linear-gradient(135deg, transparent 0 7px, rgba(81, 214, 223, 0.16) 8px 9px);
+    color: var(--cyan);
 }
 
 .frente-carta {
     transform: rotateY(180deg);
-    border-color: #d4c3a0;
-    background: #fffdf6;
-    color: #234c3b;
+    border-color: #bcd0da;
+    background: #f8fcfd;
+    color: #123448;
 }
 
 .carta-mesa.sem-voto .verso-carta {
@@ -687,7 +693,8 @@ input {
     }
 
     .superficie-mesa {
-        width: min(48%, 230px);
+        width: min(62%, 280px);
+        height: 52%;
         min-height: 0;
         padding: 12px 14px;
         border-width: 9px;
@@ -701,6 +708,10 @@ input {
     .arena-mesa.equipe-pequena {
         height: clamp(260px, 36vh, 300px);
         min-height: 260px;
+    }
+
+    .arena-mesa.equipe-pequena .assento-mesa {
+        width: 60px;
     }
 
     .arena-mesa.equipe-cheia {
