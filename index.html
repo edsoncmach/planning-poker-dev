@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning Poker - Equipe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Planning Poker ♠️</h1>
+            <p>Escolha sua estimativa para a tarefa atual</p>
+        </header>
+
+        <main>
+            <div class="mesa-de-votos">
+                <h2>Mesa de Votos</h2>
+                <div class="status-mesa">Seu voto atual: <span id="voto-atual">Nenhum</span></div>
+                <div class="acoes">
+                    <button id="btn-revelar" class="btn primary">Revelar Votos</button>
+                    <button id="btn-limpar" class="btn secondary">Nova Rodada</button>
+                </div>
+            </div>
+
+            <div class="deck-cartas">
+                <h2>Suas Cartas (Fibonacci)</h2>
+                <div id="container-cartas" class="cartas">
+                    <!-- Cartas geradas via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
