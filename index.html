@@ -4,36 +4,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planning Poker - Equipe</title>
+    <meta name="theme-color" content="#f4f7f6">
+    <title>Planning Poker | Equipe</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
-        <header>
-            <h1>Planning Poker ♠️</h1>
-            <p>Escolha sua estimativa para a tarefa atual</p>
+        <header class="cabecalho">
+            <div>
+                <p class="sobretitulo">Estimativa colaborativa</p>
+                <h1>Planning Poker</h1>
+            </div>
+            <div class="sala-compartilhada">
+                <span>SALA</span>
+                <strong id="codigo-sala">equipe</strong>
+                <button id="btn-copiar-link" class="btn-icon" type="button" aria-label="Copiar link da sala"
+                    title="Copiar link da sala">Copiar link</button>
+            </div>
         </header>
 
-        <main>
-            <div class="mesa-de-votos">
-                <h2>Mesa de Votos</h2>
-                <div class="status-mesa">Seu voto atual: <span id="voto-atual">Nenhum</span></div>
-                <div class="acoes">
-                    <button id="btn-revelar" class="btn primary">Revelar Votos</button>
-                    <button id="btn-limpar" class="btn secondary">Nova Rodada</button>
-                </div>
-            </div>
+        <p id="mensagem-status" class="mensagem-status" role="status" aria-live="polite">Conectando à sala...</p>
 
-            <div class="deck-cartas">
-                <h2>Suas Cartas (Fibonacci)</h2>
-                <div id="container-cartas" class="cartas">
-                    <!-- Cartas geradas via JavaScript -->
+        <main>
+            <section id="painel-entrada" class="painel-entrada">
+                <h2>Entre na sala</h2>
+                <p>Escolha como seu nome aparecerá para o time.</p>
+                <form id="form-entrada">
+                    <label for="nome-participante">Seu nome</label>
+                    <div class="linha-entrada">
+                        <input id="nome-participante" name="nome" type="text" maxlength="32" autocomplete="name"
+                            placeholder="Ex.: Alex" required>
+                        <button id="btn-entrar" class="btn primary" type="submit" disabled>Entrar</button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="painel-jogo" class="painel-jogo" hidden>
+                <div class="barra-sala">
+                    <div>
+                        <p class="sobretitulo">Participantes</p>
+                        <h2><span id="total-participantes">0</span> na sala</h2>
+                    </div>
+                    <ul id="lista-participantes" class="lista-participantes" aria-label="Participantes da sala"></ul>
                 </div>
-            </div>
+
+                <section class="mesa-de-votos" aria-labelledby="titulo-mesa">
+                    <div class="mesa-cabecalho">
+                        <div>
+                            <p class="sobretitulo">Rodada atual</p>
+                            <h2 id="titulo-mesa">Mesa de votos</h2>
+                        </div>
+                        <p class="status-votos"><span id="total-votos">0</span> votos enviados</p>
+                    </div>
+
+                    <p class="status-mesa">Seu voto: <strong id="voto-atual">Nenhum</strong></p>
+                    <div id="resultados-votos" class="resultados-votos" aria-live="polite" hidden></div>
+                    <div class="acoes">
+                        <button id="btn-revelar" class="btn primary" type="button">Revelar votos</button>
+                        <button id="btn-limpar" class="btn secondary" type="button">Nova rodada</button>
+                    </div>
+                </section>
+
+                <section class="deck-cartas" aria-labelledby="titulo-cartas">
+                    <div class="deck-cabecalho">
+                        <div>
+                            <p class="sobretitulo">Sequência Fibonacci</p>
+                            <h2 id="titulo-cartas">Escolha sua carta</h2>
+                        </div>
+                    </div>
+                    <div id="container-cartas" class="cartas"></div>
+                </section>
+            </section>
         </main>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>
