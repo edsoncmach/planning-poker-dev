@@ -166,7 +166,7 @@ function desenharAssentos() {
     );
     const quantidade = itens.length;
     const votosEnviados = itens.filter(([, participante]) => participante.votedRound === rodadaAtual).length;
-    const raioHorizontal = window.matchMedia('(max-width: 600px)').matches ? 35 : 42;
+    const mobile = window.matchMedia('(max-width: 600px)').matches;
     arenaMesa.classList.toggle('compacta', quantidade > 7 && quantidade <= 12);
     arenaMesa.classList.toggle('densa', quantidade > 12);
     assentosMesa.dataset.quantidade = String(quantidade);
@@ -182,27 +182,31 @@ function desenharAssentos() {
             const lado = Math.floor(indice / lugaresPorLado);
             const lugar = indice % lugaresPorLado;
             const lugaresNesteLado = Math.min(lugaresPorLado, quantidade - lado * lugaresPorLado);
+            const margemLateral = mobile ? 11 : 7;
             const posicao = (minimo, maximo) => lugaresNesteLado === 1
                 ? 50
                 : minimo + (maximo - minimo) * lugar / (lugaresNesteLado - 1);
 
             if (lado === 0) {
-                x = posicao(10, 90);
-                y = 10;
+                x = posicao(18, 82);
+                y = 9;
             } else if (lado === 1) {
-                x = 90;
+                x = 100 - margemLateral;
                 y = posicao(25, 75);
             } else if (lado === 2) {
-                x = posicao(90, 10);
-                y = 90;
+                x = posicao(82, 18);
+                y = 91;
             } else {
-                x = 10;
+                x = margemLateral;
                 y = posicao(75, 25);
             }
         } else {
             const angulo = -Math.PI / 2 + (2 * Math.PI * indice) / quantidade;
-            x = 50 + Math.cos(angulo) * raioHorizontal;
-            y = 50 + Math.sin(angulo) * 32;
+            const normalizador = Math.max(Math.abs(Math.cos(angulo)), Math.abs(Math.sin(angulo)));
+            const raioHorizontal = mobile ? 38 : 43;
+            const raioVertical = mobile ? 28 : 38;
+            x = 50 + (Math.cos(angulo) / normalizador) * raioHorizontal;
+            y = 50 + (Math.sin(angulo) / normalizador) * raioVertical;
         }
         const votou = participante.votedRound === rodadaAtual;
         const assento = document.createElement('article');
@@ -255,9 +259,14 @@ function mostrarVotos(votos) {
     const media = votosNumericos.length
         ? votosNumericos.reduce((soma, valor) => soma + valor, 0) / votosNumericos.length
         : null;
+    const descricaoMedia = media === null
+        ? 'Não houve votos numéricos; cartas ? e ☕ não entram na média.'
+        : `Média de ${media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos entre ${votosNumericos.length} votos numéricos. Cartas ? e ☕ não entram no cálculo.`;
     mediaVotos.textContent = media === null
-        ? 'Média: sem votos numéricos (cartas ? e ☕ não entram no cálculo).'
-        : `Média: ${media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos (${votosNumericos.length} votos numéricos; ? e ☕ não entram no cálculo).`;
+        ? 'Média: sem votos numéricos'
+        : `Média: ${media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos`;
+    mediaVotos.title = descricaoMedia;
+    mediaVotos.setAttribute('aria-label', descricaoMedia);
     mediaVotos.hidden = false;
 }
 
