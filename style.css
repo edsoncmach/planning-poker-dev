@@ -166,6 +166,11 @@ h2 {
     font: 15px/1.5 'Trebuchet MS', Arial, sans-serif;
 }
 
+.painel-entrada > .aviso-perfil {
+    margin: 10px 0 22px;
+    font-size: 12px;
+}
+
 label {
     display: block;
     margin-bottom: 8px;
@@ -253,6 +258,36 @@ input {
     border-radius: 4px;
     background: var(--surface);
     font: 13px 'Trebuchet MS', Arial, sans-serif;
+}
+
+.avatar-participante,
+.avatar-assento {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--green-soft);
+    color: var(--green-dark);
+    font: 700 12px 'Trebuchet MS', Arial, sans-serif;
+}
+
+.avatar-participante {
+    width: 28px;
+    height: 28px;
+}
+
+.avatar-assento {
+    width: 26px;
+    height: 26px;
+}
+
+.avatar-participante img,
+.avatar-assento img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .nome-participante {

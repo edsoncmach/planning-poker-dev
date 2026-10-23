@@ -1,7 +1,11 @@
 import { firebaseConfig } from './firebase-config.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
 import {
+    GoogleAuthProvider,
+    getAdditionalUserInfo,
     getAuth,
+    linkWithPopup,
+    onAuthStateChanged,
     signInAnonymously
 } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
 import {
@@ -31,6 +35,7 @@ const mensagemStatus = document.getElementById('mensagem-status');
 const painelEntrada = document.getElementById('painel-entrada');
 const painelJogo = document.getElementById('painel-jogo');
 const botaoEntrar = document.getElementById('btn-entrar');
+const botaoGoogle = document.getElementById('btn-google');
 const listaParticipantes = document.getElementById('lista-participantes');
 const arenaMesa = document.querySelector('.arena-mesa');
 const assentosMesa = document.getElementById('assentos-mesa');
@@ -44,6 +49,8 @@ const caixaSala = document.getElementById('sala-compartilhada');
 let database;
 let participanteId;
 let nomeParticipante = '';
+let fotoParticipante = '';
+let autenticacao;
 let metadataSala = null;
 let participantes = {};
 let votosRevelados = {};
@@ -64,6 +71,76 @@ if (salaId) {
 function atualizarStatus(mensagem, erro = false) {
     mensagemStatus.textContent = mensagem;
     mensagemStatus.classList.toggle('erro', erro);
+}
+
+function aplicarPerfilGoogle(usuario, perfilAdicional = null) {
+    const perfilProvedor = usuario.providerData.find(provedor => provedor.providerId === 'google.com');
+    const nome = usuario.displayName
+        || perfilProvedor?.displayName
+        || (typeof perfilAdicional?.name === 'string' ? perfilAdicional.name : '');
+    fotoParticipante = usuario.photoURL
+        || perfilProvedor?.photoURL
+        || (typeof perfilAdicional?.picture === 'string' ? perfilAdicional.picture : '');
+    campoNome.disabled = Boolean(nome);
+    if (nome) campoNome.value = nome.slice(0, 32);
+}
+
+function mostrarAvatar(container, participante, classe) {
+    const avatar = document.createElement('span');
+    avatar.className = classe;
+    avatar.setAttribute('aria-hidden', 'true');
+
+    const foto = typeof participante.photoURL === 'string' && /^https:\/\//i.test(participante.photoURL)
+        ? participante.photoURL
+        : '';
+    if (foto) {
+        const imagem = document.createElement('img');
+        imagem.src = foto;
+        imagem.alt = '';
+        imagem.referrerPolicy = 'no-referrer';
+        imagem.addEventListener('error', () => {
+            imagem.remove();
+            avatar.textContent = String(participante.name || '?').trim().charAt(0).toLocaleUpperCase('pt-BR');
+        }, { once: true });
+        avatar.appendChild(imagem);
+    } else {
+        avatar.textContent = String(participante.name || '?').trim().charAt(0).toLocaleUpperCase('pt-BR');
+    }
+
+    container.appendChild(avatar);
+}
+
+async function entrarComGoogle() {
+    const usuario = autenticacao.currentUser;
+    if (!usuario) {
+        atualizarStatus('A autenticação ainda não está pronta. Tente novamente.', true);
+        return;
+    }
+
+    botaoGoogle.disabled = true;
+    try {
+        const credencial = usuario.isAnonymous
+            ? await linkWithPopup(usuario, new GoogleAuthProvider())
+            : { user: usuario };
+        participanteId = credencial.user.uid;
+        aplicarPerfilGoogle(credencial.user, getAdditionalUserInfo(credencial)?.profile);
+        botaoGoogle.textContent = 'Perfil do Google conectado';
+        atualizarStatus(campoNome.disabled
+            ? 'Perfil conectado. Entre na sala para continuar.'
+            : 'Perfil conectado, mas o Google não forneceu um nome. Informe como deseja aparecer na sala.');
+    } catch (erro) {
+        if (erro.code === 'auth/credential-already-in-use') {
+            atualizarStatus('Esta conta Google já está vinculada a outro usuário do Firebase. Você ainda pode entrar anonimamente.', true);
+        } else if (erro.code === 'auth/popup-closed-by-user' || erro.code === 'auth/cancelled-popup-request') {
+            atualizarStatus('Conexão com Google cancelada. Você ainda pode entrar anonimamente.');
+        } else if (erro.code === 'auth/unauthorized-domain') {
+            atualizarStatus('Adicione o domínio deste site aos domínios autorizados do Firebase Authentication.', true);
+        } else {
+            atualizarStatus('Não foi possível conectar ao Google. Confira se o provedor Google está habilitado no Firebase.', true);
+        }
+        console.error(erro);
+        botaoGoogle.disabled = false;
+    }
 }
 
 function definirSala(id, nome) {
@@ -142,6 +219,7 @@ function desenharParticipantes() {
     itens.forEach(([id, participante]) => {
         const item = document.createElement('li');
         item.className = 'participante';
+        mostrarAvatar(item, participante, 'avatar-participante');
         const nome = document.createElement('span');
         nome.className = 'nome-participante';
         const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
@@ -234,6 +312,8 @@ function desenharAssentos() {
         const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
         nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
         nome.title = nome.textContent;
+
+        mostrarAvatar(assento, participante, 'avatar-assento');
 
         const estado = document.createElement('span');
         estado.className = votou ? 'estado-assento votou' : 'estado-assento';
@@ -414,6 +494,7 @@ async function entrarNaSala(evento) {
         const atual = await get(participanteRef);
         await update(participanteRef, {
             name: nomeParticipante,
+            photoURL: fotoParticipante || null,
             votedRound: atual.val()?.votedRound ?? null
         });
         sessionStorage.setItem(`planning-poker-name-${salaId}`, nomeParticipante);
@@ -488,6 +569,7 @@ document.getElementById('btn-copiar-link').addEventListener('click', async () =>
 
 formularioCriacao.addEventListener('submit', criarSala);
 formularioEntrada.addEventListener('submit', entrarNaSala);
+botaoGoogle.addEventListener('click', entrarComGoogle);
 botaoRevelar.addEventListener('click', revelarVotos);
 botaoNovaRodada.addEventListener('click', iniciarNovaRodada);
 configurarCartas();
@@ -502,16 +584,32 @@ if (!configuracaoValida) {
 } else {
     try {
         const app = initializeApp(firebaseConfig);
-        const autenticacao = getAuth(app);
+        autenticacao = getAuth(app);
         database = getDatabase(app);
-        signInAnonymously(autenticacao).then(credencial => {
-            participanteId = credencial.user.uid;
-            botaoEntrar.disabled = false;
-            botaoCriarSala.disabled = false;
-            atualizarStatus(salaId ? 'Conexão pronta. Informe seu nome para entrar.' : 'Conexão pronta. Crie uma sala para começar.');
-        }).catch(erro => {
-            atualizarStatus('Falha na autenticação anônima. Ative esse provedor no Firebase.', true);
-            console.error(erro);
+        let iniciandoAutenticacao = false;
+        onAuthStateChanged(autenticacao, usuario => {
+            if (usuario) {
+                participanteId = usuario.uid;
+                if (usuario.isAnonymous) {
+                    fotoParticipante = '';
+                    campoNome.disabled = false;
+                } else {
+                    aplicarPerfilGoogle(usuario);
+                }
+                botaoGoogle.disabled = !usuario.isAnonymous;
+                if (!usuario.isAnonymous) botaoGoogle.textContent = 'Perfil do Google conectado';
+                botaoEntrar.disabled = false;
+                botaoCriarSala.disabled = false;
+                atualizarStatus(salaId ? 'Conexão pronta. Informe seu nome para entrar.' : 'Conexão pronta. Crie uma sala para começar.');
+            } else if (!iniciandoAutenticacao) {
+                iniciandoAutenticacao = true;
+                signInAnonymously(autenticacao).catch(erro => {
+                    atualizarStatus('Falha na autenticação anônima. Ative esse provedor no Firebase.', true);
+                    console.error(erro);
+                }).finally(() => {
+                    iniciandoAutenticacao = false;
+                });
+            }
         });
     } catch (erro) {
         atualizarStatus('Configuração do Firebase inválida. Revise firebase-config.js.', true);
