@@ -355,8 +355,8 @@ input {
     top: 50%;
     left: 50%;
     display: flex;
-    width: min(43%, 440px);
-    height: 82%;
+    width: min(48%, 500px);
+    height: 84%;
     align-items: center;
     flex-direction: column;
     justify-content: center;
@@ -558,12 +558,12 @@ input {
 }
 
 .arena-mesa.equipe-cheia {
-    height: clamp(320px, 42vh, 360px);
-    min-height: 320px;
+    height: clamp(390px, 48vh, 430px);
+    min-height: 390px;
 }
 
 .arena-mesa.equipe-cheia .assento-mesa {
-    width: 82px;
+    width: 90px;
     gap: 2px;
     padding: 4px 3px 5px;
 }
@@ -586,13 +586,13 @@ input {
 }
 
 .arena-mesa.equipe-cheia .carta-mesa {
-    width: 40px;
-    height: 56px;
+    width: 46px;
+    height: 64px;
 }
 
 .arena-mesa.equipe-cheia .verso-carta,
 .arena-mesa.equipe-cheia .frente-carta {
-    font-size: 17px;
+    font-size: 20px;
 }
 
 .arena-mesa.compacta .assento-mesa {
@@ -765,8 +765,8 @@ input {
     }
 
     .superficie-mesa {
-        width: min(62%, 280px);
-        height: 52%;
+        width: min(68%, 310px);
+        height: 56%;
         min-height: 0;
         padding: 12px 14px;
         border-width: 9px;
@@ -804,22 +804,22 @@ input {
     }
 
     .arena-mesa.equipe-cheia {
-        height: 350px;
-        min-height: 350px;
+        height: 410px;
+        min-height: 410px;
     }
 
     .arena-mesa.equipe-cheia .assento-mesa {
-        width: 72px;
+        width: 78px;
     }
 
     .arena-mesa.equipe-cheia .carta-mesa {
-        width: 34px;
-        height: 48px;
+        width: 40px;
+        height: 56px;
     }
 
     .arena-mesa.equipe-cheia .verso-carta,
     .arena-mesa.equipe-cheia .frente-carta {
-        font-size: 15px;
+        font-size: 18px;
     }
 
     .arena-mesa.compacta {
