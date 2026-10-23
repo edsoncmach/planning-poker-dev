@@ -188,7 +188,7 @@ function desenharAssentos() {
                 ? Math.ceil(quantidade / 2)
                 : Math.floor(quantidade / 2);
             const posicoesVerticais = lugaresNesteLado === 3
-                ? [25, 50, 75]
+                ? [19, 50, 81]
                 : lugaresNesteLado === 2 ? [35, 65] : [50];
             x = mobile ? (lado === 0 ? 21 : 79) : (lado === 0 ? 22 : 78);
             y = posicoesVerticais[lugar];
@@ -239,6 +239,10 @@ function desenharAssentos() {
         estado.className = votou ? 'estado-assento votou' : 'estado-assento';
         estado.textContent = votou ? 'Voto enviado' : 'Escolhendo';
 
+        const cadeira = document.createElement('span');
+        cadeira.className = 'icone-cadeira';
+        cadeira.setAttribute('aria-hidden', 'true');
+
         const carta = document.createElement('div');
         carta.className = 'carta-mesa';
         if (!votou) carta.classList.add('sem-voto');
@@ -258,6 +262,7 @@ function desenharAssentos() {
         frente.textContent = Object.hasOwn(votosRevelados, id) ? votosRevelados[id] : '–';
         faces.append(verso, frente);
         carta.appendChild(faces);
+        estado.prepend(cadeira);
         assento.append(nome, estado, carta);
         assentosMesa.appendChild(assento);
     });

@@ -388,42 +388,57 @@ input {
     width: 100px;
     align-items: center;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
+    padding: 5px 4px 6px;
     transform: translate(-50%, -50%);
+    border: 1px solid #c5d5df;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #fff, #f3f8fa);
+    box-shadow: 0 4px 0 #c4d3dc, 0 8px 16px rgba(28, 56, 75, 0.12);
     text-align: center;
 }
 
-.assento-mesa::before {
-    position: absolute;
-    z-index: -1;
-    top: 19px;
-    width: 76px;
-    height: 74px;
-    border: 1px solid #c5d5df;
-    border-radius: 13px;
-    background: linear-gradient(145deg, #fff, #e4edf2);
-    box-shadow: 0 4px 0 #c4d3dc, 0 8px 16px rgba(28, 56, 75, 0.09);
-    content: '';
-}
-
 .nome-assento {
-    width: fit-content;
-    max-width: 148px;
+    width: 100%;
+    min-height: 22px;
     margin: 0;
-    padding: 4px 7px;
-    border: 1px solid #9aafbb;
-    border-radius: 6px;
-    background: #fff;
-    box-shadow: 0 2px 5px rgba(28, 56, 75, 0.18);
+    padding: 3px 2px;
     color: var(--ink);
     font: 700 12px/1.25 'Trebuchet MS', Arial, sans-serif;
     overflow-wrap: anywhere;
 }
 
 .estado-assento {
-    min-height: 12px;
+    display: flex;
+    min-height: 13px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     color: #65726b;
     font: 10px/1.2 'Trebuchet MS', Arial, sans-serif;
+}
+
+.icone-cadeira {
+    position: relative;
+    display: inline-block;
+    width: 14px;
+    height: 12px;
+    flex: 0 0 14px;
+    border: 1.5px solid #8299a5;
+    border-top: 0;
+    border-radius: 2px 2px 4px 4px;
+}
+
+.icone-cadeira::before {
+    position: absolute;
+    top: -5px;
+    left: 2px;
+    width: 7px;
+    height: 6px;
+    border: 1.5px solid #8299a5;
+    border-bottom: 0;
+    border-radius: 4px 4px 0 0;
+    content: '';
 }
 
 .estado-assento.votou {
@@ -511,8 +526,9 @@ input {
 }
 
 .arena-mesa.equipe-cheia .assento-mesa {
-    width: 78px;
+    width: 82px;
     gap: 2px;
+    padding: 4px 3px 5px;
 }
 
 .arena-mesa.equipe-cheia .nome-assento {
@@ -522,7 +538,14 @@ input {
 
 .arena-mesa.equipe-cheia .estado-assento {
     min-height: 10px;
-    font-size: 9px;
+    gap: 2px;
+    font-size: 8px;
+}
+
+.arena-mesa.equipe-cheia .icone-cadeira {
+    width: 12px;
+    height: 10px;
+    flex-basis: 12px;
 }
 
 .arena-mesa.equipe-cheia .carta-mesa {
@@ -551,7 +574,7 @@ input {
 
 .arena-mesa.densa .assento-mesa {
     width: 88px;
-    gap: 3px;
+    gap: 2px;
 }
 
 .arena-mesa.densa .nome-assento {
@@ -718,8 +741,8 @@ input {
     }
 
     .nome-assento {
-        max-width: 110px;
-        padding: 3px 5px;
+        max-width: none;
+        padding: 3px 2px;
         font-size: 11px;
     }
 
@@ -729,7 +752,18 @@ input {
     }
 
     .arena-mesa.equipe-pequena .assento-mesa {
-        width: 60px;
+        width: 72px;
+    }
+
+    .arena-mesa.equipe-pequena .estado-assento {
+        gap: 2px;
+        font-size: 8px;
+    }
+
+    .arena-mesa.equipe-pequena .icone-cadeira {
+        width: 12px;
+        height: 10px;
+        flex-basis: 12px;
     }
 
     .arena-mesa.equipe-cheia {
@@ -738,7 +772,7 @@ input {
     }
 
     .arena-mesa.equipe-cheia .assento-mesa {
-        width: 58px;
+        width: 72px;
     }
 
     .arena-mesa.equipe-cheia .carta-mesa {
@@ -804,11 +838,23 @@ input {
     }
 
     .arena-mesa.densa .assento-mesa {
-        width: 58px;
+        width: 70px;
+        padding: 4px 3px 5px;
     }
 
     .arena-mesa.densa .nome-assento {
         font-size: 9px;
+    }
+
+    .arena-mesa.densa .estado-assento {
+        gap: 2px;
+        font-size: 8px;
+    }
+
+    .arena-mesa.densa .icone-cadeira {
+        width: 12px;
+        height: 10px;
+        flex-basis: 12px;
     }
 
     .arena-mesa.densa .carta-mesa {
