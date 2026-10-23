@@ -256,7 +256,7 @@ function desenharAssentos() {
         const verso = document.createElement('span');
         verso.className = 'verso-carta';
         verso.setAttribute('aria-hidden', 'true');
-        verso.textContent = votou ? 'PP' : '...';
+        verso.textContent = votou ? '🃏' : '...';
         const frente = document.createElement('span');
         frente.className = 'frente-carta';
         frente.textContent = Object.hasOwn(votosRevelados, id) ? votosRevelados[id] : '–';

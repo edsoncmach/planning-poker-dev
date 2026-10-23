@@ -484,6 +484,8 @@ input {
         linear-gradient(45deg, transparent 45%, rgba(81, 214, 223, 0.18) 46% 49%, transparent 50%),
         repeating-linear-gradient(135deg, transparent 0 7px, rgba(81, 214, 223, 0.16) 8px 9px);
     color: var(--cyan);
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+    font-size: 26px;
 }
 
 .frente-carta {
