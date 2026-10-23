@@ -1,6 +1,6 @@
 # Planning Poker da equipe
 
-Aplicação estática para estimativa colaborativa. Cada pessoa entra com um nome, sem criar conta ou preencher uma tela de login. A autenticação anônima do Firebase acontece automaticamente no navegador. O criador de uma sala é seu dono, controla a revelação e as novas rodadas. Os votos são sincronizados em tempo real e a média considera apenas as cartas numéricas (as cartas `?` e `☕` ficam fora do cálculo).
+Aplicação estática para estimativa colaborativa. Cada pessoa entra com um nome, sem criar conta ou preencher uma tela de login. A autenticação anônima do Firebase acontece automaticamente no navegador. O criador de uma sala é seu dono, controla a revelação e as novas rodadas. Os votos são sincronizados em tempo real; a estimativa exibida ajusta a média dos votos numéricos para a carta Fibonacci mais próxima e também mostra a média aritmética original. Em caso de empate entre duas cartas, a estimativa sobe para a próxima. As cartas `?` e `☕` ficam fora do cálculo.
 
 ## Configuração do Firebase
 

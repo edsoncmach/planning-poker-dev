@@ -137,11 +137,13 @@ function desenharParticipantes() {
     const itens = Object.entries(participantes).sort(([, primeiro], [, segundo]) =>
         String(primeiro.name || '').localeCompare(String(segundo.name || ''), 'pt-BR')
     );
+    listaParticipantes.hidden = itens.length === 0;
 
     itens.forEach(([id, participante]) => {
         const item = document.createElement('li');
         item.className = 'participante';
         const nome = document.createElement('span');
+        nome.className = 'nome-participante';
         const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
         nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
         const estado = document.createElement('span');
@@ -188,7 +190,7 @@ function desenharAssentos() {
             const posicoesVerticais = lugaresNesteLado === 3
                 ? [25, 50, 75]
                 : lugaresNesteLado === 2 ? [35, 65] : [50];
-            x = mobile ? (lado === 0 ? 9 : 91) : (lado === 0 ? 22 : 78);
+            x = mobile ? (lado === 0 ? 21 : 79) : (lado === 0 ? 22 : 78);
             y = posicoesVerticais[lugar];
         } else if (quantidade > 12) {
             const lugaresPorLado = Math.ceil(quantidade / 4);
@@ -231,6 +233,7 @@ function desenharAssentos() {
         nome.className = 'nome-assento';
         const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
         nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
+        nome.title = nome.textContent;
 
         const estado = document.createElement('span');
         estado.className = votou ? 'estado-assento votou' : 'estado-assento';
@@ -272,12 +275,21 @@ function mostrarVotos(votos) {
     const media = votosNumericos.length
         ? votosNumericos.reduce((soma, valor) => soma + valor, 0) / votosNumericos.length
         : null;
+    const valoresFibonacci = [...valoresNumericos].map(Number).sort((primeiro, segundo) => primeiro - segundo);
+    const mediaAjustada = media === null
+        ? null
+        : valoresFibonacci.reduce((maisProximo, valor) =>
+            Math.abs(valor - media) <= Math.abs(maisProximo - media) ? valor : maisProximo
+        );
+    const mediaFormatada = media === null
+        ? null
+        : media.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
     const descricaoMedia = media === null
         ? 'Não houve votos numéricos; cartas ? e ☕ não entram na média.'
-        : `Média de ${media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos entre ${votosNumericos.length} votos numéricos. Cartas ? e ☕ não entram no cálculo.`;
+        : `Média aritmética original de ${mediaFormatada} pontos, ajustada para ${mediaAjustada} na sequência Fibonacci, entre ${votosNumericos.length} votos numéricos. Em caso de empate, vale o próximo número Fibonacci maior. Cartas ? e ☕ não entram no cálculo.`;
     mediaVotos.textContent = media === null
-        ? 'Média: sem votos numéricos'
-        : `Média: ${media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} pontos`;
+        ? 'Estimativa Fibonacci: sem votos numéricos'
+        : `Estimativa Fibonacci: ${mediaAjustada} pontos (média: ${mediaFormatada})`;
     mediaVotos.title = descricaoMedia;
     mediaVotos.setAttribute('aria-label', descricaoMedia);
     mediaVotos.hidden = false;

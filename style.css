@@ -255,6 +255,11 @@ input {
     font: 13px 'Trebuchet MS', Arial, sans-serif;
 }
 
+.nome-participante {
+    color: var(--ink);
+    font-weight: 700;
+}
+
 .estado-voto {
     color: var(--muted);
     font-size: 11px;
@@ -402,16 +407,16 @@ input {
 }
 
 .nome-assento {
-    display: -webkit-box;
-    width: 100%;
-    min-height: 26px;
+    width: fit-content;
+    max-width: 148px;
     margin: 0;
-    overflow: hidden;
+    padding: 4px 7px;
+    border: 1px solid #9aafbb;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(28, 56, 75, 0.18);
     color: var(--ink);
-    font: 700 12px/1.3 'Trebuchet MS', Arial, sans-serif;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    font: 700 12px/1.25 'Trebuchet MS', Arial, sans-serif;
     overflow-wrap: anywhere;
 }
 
@@ -672,9 +677,9 @@ input {
     }
 
     .barra-sala {
-        align-items: center;
-        flex-direction: row;
-        gap: 8px;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
         padding: 5px 0;
     }
 
@@ -690,6 +695,7 @@ input {
     .lista-participantes {
         justify-content: flex-start;
         max-width: 100%;
+        width: 100%;
     }
 
     .arena-mesa {
@@ -709,6 +715,12 @@ input {
 
     .assento-mesa {
         width: 70px;
+    }
+
+    .nome-assento {
+        max-width: 110px;
+        padding: 3px 5px;
+        font-size: 11px;
     }
 
     .arena-mesa.equipe-pequena {
