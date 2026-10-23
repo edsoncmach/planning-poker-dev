@@ -39,6 +39,7 @@ const botaoGoogle = document.getElementById('btn-google');
 const listaParticipantes = document.getElementById('lista-participantes');
 const arenaMesa = document.querySelector('.arena-mesa');
 const assentosMesa = document.getElementById('assentos-mesa');
+const cartasDescartadas = document.getElementById('cartas-descartadas');
 const nomeMesa = document.getElementById('nome-mesa');
 const resumoMesa = document.getElementById('resumo-mesa');
 const mediaVotos = document.getElementById('media-votos');
@@ -57,6 +58,8 @@ let votosRevelados = {};
 let revelado = false;
 let rodadaAtual = 1;
 let ouvintesConectados = false;
+let rodadaCartasDesenhada = null;
+let idsVotantesAnteriores = new Set();
 
 painelCriacao.hidden = Boolean(salaId);
 painelEntrada.hidden = !salaId;
@@ -240,12 +243,29 @@ function desenharParticipantes() {
 }
 
 function desenharAssentos() {
-    assentosMesa.replaceChildren();
     const itens = Object.entries(participantes).sort(([, primeiro], [, segundo]) =>
         String(primeiro.name || '').localeCompare(String(segundo.name || ''), 'pt-BR')
     );
     const quantidade = itens.length;
-    const votosEnviados = itens.filter(([, participante]) => participante.votedRound === rodadaAtual).length;
+    const votantesAtuais = new Set(itens
+        .filter(([, participante]) => participante.votedRound === rodadaAtual)
+        .map(([id]) => id));
+    const rodadaAlterada = rodadaCartasDesenhada !== rodadaAtual;
+    const novosVotantes = rodadaAlterada
+        ? new Set()
+        : new Set([...votantesAtuais].filter(id => !idsVotantesAnteriores.has(id)));
+    const origensAnimacao = new Map();
+    const animacoesPendentes = [];
+    novosVotantes.forEach(id => {
+        const assentoAnterior = [...assentosMesa.children].find(elemento => elemento.dataset.participanteId === id);
+        if (assentoAnterior) origensAnimacao.set(id, assentoAnterior.getBoundingClientRect());
+    });
+    rodadaCartasDesenhada = rodadaAtual;
+    idsVotantesAnteriores = votantesAtuais;
+    assentosMesa.replaceChildren();
+    cartasDescartadas.replaceChildren();
+    arenaMesa.classList.toggle('tem-cartas-na-mesa', votantesAtuais.size > 0);
+    const votosEnviados = votantesAtuais.size;
     const mobile = window.matchMedia('(max-width: 600px)').matches;
     arenaMesa.classList.toggle('equipe-pequena', quantidade > 0 && quantidade <= 6);
     arenaMesa.classList.toggle('equipe-cheia', quantidade > 4 && quantidade <= 6);
@@ -268,7 +288,7 @@ function desenharAssentos() {
             const posicoesVerticais = lugaresNesteLado === 3
                 ? [19, 50, 81]
                 : lugaresNesteLado === 2 ? [35, 65] : [50];
-            x = mobile ? (lado === 0 ? 3 : 97) : (lado === 0 ? 22 : 78);
+            x = mobile ? (lado === 0 ? 21 : 79) : (lado === 0 ? 22 : 78);
             y = posicoesVerticais[lugar];
         } else if (quantidade > 12) {
             const lugaresPorLado = Math.ceil(quantidade / 4);
@@ -302,54 +322,107 @@ function desenharAssentos() {
             y = 50 + (Math.sin(angulo) / normalizador) * raioVertical;
         }
         const votou = participante.votedRound === rodadaAtual;
+        const destinoX = quantidade <= 6
+            ? (indice % 2 === 0 ? (mobile ? 33 : 31) : (mobile ? 67 : 69))
+            : 50 + (x - 50) * 0.7;
+        const destinoY = quantidade <= 6 ? y : 50 + (y - 50) * 0.7;
         const assento = document.createElement('article');
         assento.className = 'assento-mesa';
-        if (quantidade <= 6) {
-            assento.classList.add(indice % 2 === 0 ? 'lado-esquerdo' : 'lado-direito');
-        }
+        assento.dataset.participanteId = id;
         assento.style.setProperty('--seat-x', `${x}%`);
         assento.style.setProperty('--seat-y', `${y}%`);
 
-        const informacoes = document.createElement('div');
-        informacoes.className = 'informacoes-assento';
-        const identidade = document.createElement('div');
-        identidade.className = 'identidade-assento';
+        mostrarAvatar(assento, participante, 'avatar-assento');
         const nome = document.createElement('p');
         nome.className = 'nome-assento';
         const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
         nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
         nome.title = nome.textContent;
-
-        mostrarAvatar(identidade, participante, 'avatar-assento');
-        identidade.appendChild(nome);
+        assento.appendChild(nome);
 
         const estado = document.createElement('span');
         estado.className = votou ? 'estado-assento votou' : 'estado-assento';
         estado.textContent = votou ? 'Voto enviado' : 'Escolhendo';
+        if (!votou) {
+            const cadeira = document.createElement('span');
+            cadeira.className = 'icone-cadeira';
+            cadeira.setAttribute('aria-hidden', 'true');
+            estado.prepend(cadeira);
+        }
+        assento.appendChild(estado);
 
-        const carta = document.createElement('div');
-        carta.className = 'carta-mesa';
-        if (!votou) carta.classList.add('sem-voto');
-        if (votou && revelado && Object.hasOwn(votosRevelados, id)) carta.classList.add('revelada');
-        carta.setAttribute('aria-label', votou && revelado && Object.hasOwn(votosRevelados, id)
-            ? `Voto de ${participante.name}: ${votosRevelados[id]}`
-            : votou ? `Voto de ${participante.name} enviado e oculto` : `${participante.name} ainda não votou`);
-
-        const faces = document.createElement('span');
-        faces.className = 'faces-carta';
-        const verso = document.createElement('span');
-        verso.className = 'verso-carta';
-        verso.setAttribute('aria-hidden', 'true');
-        verso.textContent = votou ? '🃏' : '...';
-        const frente = document.createElement('span');
-        frente.className = 'frente-carta';
-        frente.textContent = Object.hasOwn(votosRevelados, id) ? votosRevelados[id] : '–';
-        faces.append(verso, frente);
-        carta.appendChild(faces);
-        informacoes.append(identidade, estado);
-        assento.append(informacoes, carta);
         assentosMesa.appendChild(assento);
+
+        if (votou) {
+            const cartaJogada = criarCartaMesa(participante, id);
+            cartaJogada.style.setProperty('--card-x', `${destinoX}%`);
+            cartaJogada.style.setProperty('--card-y', `${destinoY}%`);
+            cartasDescartadas.appendChild(cartaJogada);
+            if (novosVotantes.has(id) && origensAnimacao.has(id)) {
+                animacoesPendentes.push([origensAnimacao.get(id), cartaJogada]);
+            }
+        }
     });
+
+    if (animacoesPendentes.length) {
+        requestAnimationFrame(() => {
+            animacoesPendentes.forEach(([origem, carta]) => {
+                if (carta.isConnected) animarDescarte(origem, carta);
+            });
+        });
+    }
+}
+
+function criarCartaMesa(participante, id) {
+    const carta = document.createElement('div');
+    carta.className = 'carta-mesa carta-descartada';
+    if (revelado && Object.hasOwn(votosRevelados, id)) carta.classList.add('revelada');
+    carta.setAttribute('aria-label', revelado && Object.hasOwn(votosRevelados, id)
+        ? `Voto de ${participante.name}: ${votosRevelados[id]}`
+        : `Voto de ${participante.name} enviado e oculto`);
+
+    const faces = document.createElement('span');
+    faces.className = 'faces-carta';
+    const verso = document.createElement('span');
+    verso.className = 'verso-carta';
+    verso.setAttribute('aria-hidden', 'true');
+    verso.textContent = '🃏';
+    const frente = document.createElement('span');
+    frente.className = 'frente-carta';
+    frente.textContent = Object.hasOwn(votosRevelados, id) ? votosRevelados[id] : '–';
+    faces.append(verso, frente);
+    carta.appendChild(faces);
+    return carta;
+}
+
+function animarDescarte(origem, carta) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const arena = arenaMesa.getBoundingClientRect();
+    const destino = carta.getBoundingClientRect();
+    const deslocamentoX = origem.left + origem.width / 2 - (destino.left + destino.width / 2);
+    const deslocamentoY = origem.top + origem.height / 2 - (destino.top + destino.height / 2);
+    const duracao = 1400;
+    const mao = document.createElement('span');
+    mao.className = 'mao-descartando';
+    mao.setAttribute('aria-hidden', 'true');
+    mao.textContent = '✋';
+    mao.style.left = `${destino.left - arena.left + destino.width / 2}px`;
+    mao.style.top = `${destino.top - arena.top + destino.height / 2}px`;
+    arenaMesa.appendChild(mao);
+
+    carta.animate([
+        { transform: `translate(${deslocamentoX}px, ${deslocamentoY}px) translate(-50%, -50%) scale(0.38) rotate(-12deg)` },
+        { transform: 'translate(0, 0) translate(-50%, -50%) scale(1.08) rotate(4deg)', offset: 0.78 },
+        { transform: 'translate(0, 0) translate(-50%, -50%) scale(1) rotate(0)' }
+    ], { duration: duracao, easing: 'cubic-bezier(0.18, 0.75, 0.25, 1)' });
+
+    mao.animate([
+        { transform: `translate(${deslocamentoX}px, ${deslocamentoY}px) rotate(-12deg) scale(0.85)`, opacity: 0 },
+        { transform: 'translate(0, 0) rotate(8deg) scale(1)', opacity: 1, offset: 0.6 },
+        { transform: 'translate(0, 0) rotate(8deg) scale(1)', opacity: 1, offset: 0.72 },
+        { transform: 'translate(14px, -12px) rotate(28deg) scale(0.25)', opacity: 0 }
+    ], { duration: duracao, easing: 'ease-in-out' }).onfinish = () => mao.remove();
 }
 
 function mostrarVotos(votos) {

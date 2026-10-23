@@ -419,61 +419,61 @@ input {
     position: absolute;
     top: var(--seat-y);
     left: var(--seat-x);
-    display: grid;
-    width: 156px;
-    grid-template-columns: minmax(0, 1fr) 50px;
+    display: flex;
+    width: 100px;
     align-items: center;
-    gap: 8px;
-    padding: 7px;
+    flex-direction: column;
+    gap: 2px;
+    padding: 5px 4px 6px;
     transform: translate(-50%, -50%);
     border: 1px solid #c5d5df;
     border-radius: 12px;
     background: linear-gradient(145deg, #fff, #f3f8fa);
     box-shadow: 0 4px 0 #c4d3dc, 0 8px 16px rgba(28, 56, 75, 0.12);
-    text-align: left;
-}
-
-.assento-mesa.lado-esquerdo {
-    transform: translate(0, -50%);
-}
-
-.assento-mesa.lado-direito {
-    transform: translate(-100%, -50%);
-}
-
-.informacoes-assento {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.identidade-assento {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    gap: 5px;
+    text-align: center;
 }
 
 .nome-assento {
-    flex: 1;
-    min-width: 0;
-    width: auto;
-    min-height: 0;
+    width: 100%;
+    min-height: 22px;
     margin: 0;
-    padding: 2px 0;
+    padding: 3px 2px;
     color: var(--ink);
-    font: 700 11px/1.2 'Trebuchet MS', Arial, sans-serif;
+    font: 700 12px/1.25 'Trebuchet MS', Arial, sans-serif;
     overflow-wrap: anywhere;
 }
 
 .estado-assento {
     display: flex;
-    min-height: 14px;
+    min-height: 13px;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    gap: 4px;
     color: #65726b;
     font: 10px/1.2 'Trebuchet MS', Arial, sans-serif;
+}
+
+.icone-cadeira {
+    position: relative;
+    display: inline-block;
+    width: 14px;
+    height: 12px;
+    flex: 0 0 14px;
+    border: 1.5px solid #8299a5;
+    border-top: 0;
+    border-radius: 2px 2px 4px 4px;
+}
+
+.icone-cadeira::before {
+    position: absolute;
+    top: -5px;
+    left: 2px;
+    width: 7px;
+    height: 6px;
+    border: 1.5px solid #8299a5;
+    border-bottom: 0;
+    border-radius: 4px 4px 0 0;
+    content: '';
 }
 
 .estado-assento.votou {
@@ -485,6 +485,29 @@ input {
     width: 48px;
     height: 68px;
     perspective: 700px;
+}
+
+.cartas-descartadas {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    pointer-events: none;
+}
+
+.carta-descartada {
+    position: absolute;
+    top: var(--card-y);
+    left: var(--card-x);
+    width: 52px;
+    height: 72px;
+    transform: translate(-50%, -50%);
+}
+
+.mao-descartando {
+    position: absolute;
+    z-index: 4;
+    font: 32px/1 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+    pointer-events: none;
 }
 
 .faces-carta {
@@ -530,21 +553,17 @@ input {
     color: #123448;
 }
 
-.carta-mesa.sem-voto .verso-carta {
-    border: 1px dashed #98a399;
-    background: rgba(255, 255, 255, 0.7);
-    box-shadow: none;
-    color: #89958c;
-    font: 14px 'Trebuchet MS', Arial, sans-serif;
+.carta-descartada .verso-carta {
+    font-size: 36px;
 }
 
-.carta-mesa:not(.sem-voto) .verso-carta {
-    font-size: 42px;
-    text-shadow: 0 1px 2px rgba(22, 42, 58, 0.18);
+.carta-descartada.revelada .verso-carta {
+    font-size: 22px;
 }
 
-.carta-mesa.sem-voto .frente-carta {
-    color: #9aa39b;
+.arena-mesa.tem-cartas-na-mesa .superficie-mesa {
+    justify-content: flex-start;
+    padding-top: 26px;
 }
 
 .arena-mesa.compacta {
@@ -568,39 +587,57 @@ input {
 }
 
 .arena-mesa.equipe-cheia .assento-mesa {
-    width: 150px;
-    grid-template-columns: minmax(0, 1fr) 46px;
-    gap: 6px;
+    width: 82px;
+    gap: 2px;
     padding: 4px 3px 5px;
 }
 
 .arena-mesa.equipe-cheia .nome-assento {
+    min-height: 22px;
     font-size: 10px;
 }
 
 .arena-mesa.equipe-cheia .estado-assento {
     min-height: 10px;
+    gap: 2px;
     font-size: 8px;
 }
 
+.arena-mesa.equipe-cheia .icone-cadeira {
+    width: 12px;
+    height: 10px;
+    flex-basis: 12px;
+}
+
 .arena-mesa.equipe-cheia .carta-mesa {
-    width: 46px;
-    height: 64px;
+    width: 40px;
+    height: 56px;
+}
+
+.arena-mesa.equipe-cheia .carta-descartada {
+    width: 52px;
+    height: 72px;
 }
 
 .arena-mesa.equipe-cheia .verso-carta,
 .arena-mesa.equipe-cheia .frente-carta {
-    font-size: 20px;
+    font-size: 17px;
 }
 
-.arena-mesa.equipe-cheia .carta-mesa:not(.sem-voto) .verso-carta,
-.arena-mesa.compacta .carta-mesa:not(.sem-voto) .verso-carta {
-    font-size: 42px;
+.arena-mesa.equipe-cheia .carta-descartada .verso-carta,
+.arena-mesa.compacta .carta-descartada .verso-carta {
+    font-size: 36px;
+}
+
+.arena-mesa.equipe-cheia .carta-descartada.revelada .verso-carta,
+.arena-mesa.equipe-cheia .carta-descartada .frente-carta,
+.arena-mesa.compacta .carta-descartada.revelada .verso-carta,
+.arena-mesa.compacta .carta-descartada .frente-carta {
+    font-size: 22px;
 }
 
 .arena-mesa.compacta .assento-mesa {
-    width: 138px;
-    grid-template-columns: minmax(0, 1fr) 44px;
+    width: 86px;
 }
 
 .arena-mesa.compacta .carta-mesa {
@@ -614,17 +651,18 @@ input {
 }
 
 .arena-mesa.densa .assento-mesa {
-    width: 126px;
-    grid-template-columns: minmax(0, 1fr) 40px;
+    width: 88px;
+    gap: 2px;
 }
 
 .arena-mesa.densa .nome-assento {
+    min-height: 27px;
     font-size: 9px;
 }
 
 .arena-mesa.densa .carta-mesa {
-    width: 40px;
-    height: 58px;
+    width: 48px;
+    height: 68px;
 }
 
 .arena-mesa.densa .verso-carta,
@@ -632,8 +670,27 @@ input {
     font-size: 17px;
 }
 
-.arena-mesa.densa .carta-mesa.sem-voto .verso-carta {
-    font-size: 32px;
+.arena-mesa.densa .icone-cadeira {
+    width: 12px;
+    height: 10px;
+    flex-basis: 12px;
+}
+
+.arena-mesa.densa .carta-descartada {
+    width: 36px;
+    height: 52px;
+}
+
+.arena-mesa.densa .carta-descartada .verso-carta {
+    font-size: 26px;
+}
+
+.arena-mesa.densa .carta-descartada.revelada .verso-carta {
+    font-size: 17px;
+}
+
+.arena-mesa.compacta .carta-descartada.revelada .verso-carta {
+    font-size: 19px;
 }
 
 .controles-mesa {
@@ -772,7 +829,7 @@ input {
     }
 
     .superficie-mesa {
-        width: min(46%, 260px);
+        width: min(62%, 280px);
         height: 56%;
         min-height: 0;
         padding: 12px 14px;
@@ -781,10 +838,7 @@ input {
     }
 
     .assento-mesa {
-        width: 128px;
-        grid-template-columns: minmax(0, 1fr) 42px;
-        gap: 5px;
-        padding: 5px;
+        width: 70px;
     }
 
     .nome-assento {
@@ -799,13 +853,18 @@ input {
     }
 
     .arena-mesa.equipe-pequena .assento-mesa {
-        width: 136px;
-        grid-template-columns: minmax(0, 1fr) 44px;
+        width: 72px;
     }
 
-    .arena-mesa.equipe-pequena .carta-mesa {
-        width: 44px;
-        height: 62px;
+    .arena-mesa.equipe-pequena .estado-assento {
+        gap: 2px;
+        font-size: 8px;
+    }
+
+    .arena-mesa.equipe-pequena .icone-cadeira {
+        width: 12px;
+        height: 10px;
+        flex-basis: 12px;
     }
 
     .arena-mesa.equipe-cheia {
@@ -814,23 +873,31 @@ input {
     }
 
     .arena-mesa.equipe-cheia .assento-mesa {
-        width: 132px;
-        grid-template-columns: minmax(0, 1fr) 42px;
+        width: 72px;
     }
 
     .arena-mesa.equipe-cheia .carta-mesa {
-        width: 40px;
-        height: 56px;
+        width: 34px;
+        height: 48px;
+    }
+
+    .arena-mesa.equipe-cheia .carta-descartada {
+        width: 44px;
+        height: 62px;
     }
 
     .arena-mesa.equipe-cheia .verso-carta,
     .arena-mesa.equipe-cheia .frente-carta {
-        font-size: 18px;
+        font-size: 15px;
     }
 
-    .arena-mesa.equipe-cheia .carta-mesa:not(.sem-voto) .verso-carta,
-    .arena-mesa.compacta .carta-mesa:not(.sem-voto) .verso-carta {
-        font-size: 36px;
+    .arena-mesa.equipe-cheia .carta-descartada .verso-carta {
+        font-size: 32px;
+    }
+
+    .arena-mesa.equipe-cheia .carta-descartada.revelada .verso-carta,
+    .arena-mesa.equipe-cheia .carta-descartada .frente-carta {
+        font-size: 18px;
     }
 
     .arena-mesa.compacta {
@@ -877,8 +944,7 @@ input {
     }
 
     .arena-mesa.compacta .assento-mesa {
-        width: 118px;
-        grid-template-columns: minmax(0, 1fr) 38px;
+        width: 82px;
     }
 
     .arena-mesa.compacta .carta-mesa {
@@ -887,8 +953,7 @@ input {
     }
 
     .arena-mesa.densa .assento-mesa {
-        width: 106px;
-        grid-template-columns: minmax(0, 1fr) 34px;
+        width: 70px;
         padding: 4px 3px 5px;
     }
 
@@ -896,26 +961,42 @@ input {
         font-size: 9px;
     }
 
-    .arena-mesa.densa .avatar-assento {
-        width: 20px;
-        height: 20px;
-    }
-
     .arena-mesa.densa .estado-assento {
+        gap: 2px;
         font-size: 8px;
     }
 
+    .arena-mesa.densa .icone-cadeira {
+        width: 12px;
+        height: 10px;
+        flex-basis: 12px;
+    }
+
     .arena-mesa.densa .carta-mesa {
-        width: 34px;
-        height: 50px;
+        width: 40px;
+        height: 58px;
     }
 
-    .carta-mesa:not(.sem-voto) .verso-carta {
-        font-size: 36px;
+    .carta-descartada {
+        width: 44px;
+        height: 62px;
     }
 
-    .arena-mesa.densa .carta-mesa:not(.sem-voto) .verso-carta {
-        font-size: 28px;
+    .arena-mesa.densa .carta-descartada {
+        width: 30px;
+        height: 44px;
+    }
+
+    .arena-mesa.densa .carta-descartada .verso-carta {
+        font-size: 22px;
+    }
+
+    .arena-mesa.densa .carta-descartada.revelada .verso-carta {
+        font-size: 13px;
+    }
+
+    .mao-descartando {
+        font-size: 26px;
     }
 
     .mesa-cabecalho {
