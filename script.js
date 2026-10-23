@@ -268,7 +268,7 @@ function desenharAssentos() {
             const posicoesVerticais = lugaresNesteLado === 3
                 ? [19, 50, 81]
                 : lugaresNesteLado === 2 ? [35, 65] : [50];
-            x = mobile ? (lado === 0 ? 21 : 79) : (lado === 0 ? 22 : 78);
+            x = mobile ? (lado === 0 ? 3 : 97) : (lado === 0 ? 22 : 78);
             y = posicoesVerticais[lugar];
         } else if (quantidade > 12) {
             const lugaresPorLado = Math.ceil(quantidade / 4);
@@ -304,24 +304,28 @@ function desenharAssentos() {
         const votou = participante.votedRound === rodadaAtual;
         const assento = document.createElement('article');
         assento.className = 'assento-mesa';
+        if (quantidade <= 6) {
+            assento.classList.add(indice % 2 === 0 ? 'lado-esquerdo' : 'lado-direito');
+        }
         assento.style.setProperty('--seat-x', `${x}%`);
         assento.style.setProperty('--seat-y', `${y}%`);
 
+        const informacoes = document.createElement('div');
+        informacoes.className = 'informacoes-assento';
+        const identidade = document.createElement('div');
+        identidade.className = 'identidade-assento';
         const nome = document.createElement('p');
         nome.className = 'nome-assento';
         const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
         nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
         nome.title = nome.textContent;
 
-        mostrarAvatar(assento, participante, 'avatar-assento');
+        mostrarAvatar(identidade, participante, 'avatar-assento');
+        identidade.appendChild(nome);
 
         const estado = document.createElement('span');
         estado.className = votou ? 'estado-assento votou' : 'estado-assento';
         estado.textContent = votou ? 'Voto enviado' : 'Escolhendo';
-
-        const cadeira = document.createElement('span');
-        cadeira.className = 'icone-cadeira';
-        cadeira.setAttribute('aria-hidden', 'true');
 
         const carta = document.createElement('div');
         carta.className = 'carta-mesa';
@@ -342,8 +346,8 @@ function desenharAssentos() {
         frente.textContent = Object.hasOwn(votosRevelados, id) ? votosRevelados[id] : '–';
         faces.append(verso, frente);
         carta.appendChild(faces);
-        estado.prepend(cadeira);
-        assento.append(nome, estado, carta);
+        informacoes.append(identidade, estado);
+        assento.append(informacoes, carta);
         assentosMesa.appendChild(assento);
     });
 }
