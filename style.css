@@ -74,6 +74,30 @@ input:focus-visible {
     border-bottom: 1px solid var(--line);
 }
 
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.marca-logo {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(8, 127, 140, 0.18);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.marca-logo:hover {
+    transform: scale(1.06) rotate(-2deg);
+}
+
+.marca-texto {
+    display: flex;
+    flex-direction: column;
+}
+
 .sobretitulo,
 .sala-compartilhada > span {
     margin: 0 0 6px;
@@ -752,12 +776,23 @@ input {
     }
 
     h1 {
-        font-size: 28px;
+        font-size: 26px;
+    }
+
+    .marca {
+        gap: 10px;
+    }
+
+    .marca-logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
     }
 
     .cabecalho {
         align-items: center;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 10px;
         padding-bottom: 10px;
     }

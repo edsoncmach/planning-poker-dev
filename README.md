@@ -1,4 +1,4 @@
-# Polartis Poker da equipe
+# Jornada Dev - Estimativa da equipe
 
 Aplicação estática para estimativa colaborativa. Cada pessoa pode entrar anonimamente informando um nome ou vincular o perfil Google para preencher nome e foto. O nome e a foto usados na sala são compartilhados com os demais participantes. A autenticação anônima do Firebase acontece automaticamente no navegador. O criador de uma sala é seu dono, controla a revelação e as novas rodadas. Os votos são sincronizados em tempo real; a estimativa exibida ajusta a média dos votos numéricos para a carta Fibonacci mais próxima e também mostra a média aritmética original. Em caso de empate entre duas cartas, a estimativa sobe para a próxima. As cartas `?` e `☕` ficam fora do cálculo.
 
