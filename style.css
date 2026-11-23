@@ -26,12 +26,13 @@ body {
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
-    padding: 14px 24px 12px;
+    padding: 16px 24px 24px;
     background-color: var(--paper);
     background-image:
+        radial-gradient(ellipse 70% 60% at 50% -10%, rgba(8, 127, 140, 0.09) 0%, transparent 75%),
         linear-gradient(rgba(24, 75, 102, 0.035) 1px, transparent 1px),
         linear-gradient(90deg, rgba(24, 75, 102, 0.035) 1px, transparent 1px);
-    background-size: 32px 32px;
+    background-size: 100% 100%, 32px 32px, 32px 32px;
 }
 
 button,
@@ -160,39 +161,397 @@ h2 {
     border-color: var(--green);
 }
 
+.status-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0 8px;
+}
+
 .mensagem-status {
-    min-height: 18px;
-    margin: 8px 0 12px;
-    color: var(--muted);
-    font: 14px 'Trebuchet MS', Arial, sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(8, 127, 140, 0.18);
+    box-shadow: 0 2px 8px rgba(8, 127, 140, 0.06);
+    color: var(--green-dark);
+    font: 600 13px/1.3 'Segoe UI Variable', 'Aptos', sans-serif;
+    transition: all 0.25s ease;
+}
+
+.mensagem-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    flex-shrink: 0;
 }
 
 .mensagem-status.erro {
-    color: var(--red);
+    background: rgba(254, 242, 242, 0.92);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #b91c1c;
 }
 
-.painel-entrada,
+.mensagem-status.erro::before {
+    background: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+    animation: none;
+}
+
+@keyframes statusPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.55;
+        transform: scale(1.2);
+    }
+}
+
 .mesa-de-votos {
     border: 1px solid var(--line);
     border-radius: 7px;
     background: var(--surface);
 }
 
-.painel-entrada {
-    width: min(100%, 510px);
-    margin: 48px auto 0;
-    padding: 28px;
+/* Modern Creation & Join Cards */
+.painel-card {
+    width: min(100%, 540px);
+    margin: 24px auto 36px;
+    padding: 34px 34px 28px;
+    border: 1px solid rgba(8, 127, 140, 0.15);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.02),
+        0 14px 34px -8px rgba(8, 127, 140, 0.12),
+        0 24px 48px -12px rgba(22, 42, 58, 0.08);
+    position: relative;
+    overflow: hidden;
 }
 
-.painel-entrada > p {
-    margin: 9px 0 23px;
+.painel-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+    background: linear-gradient(90deg, var(--green), var(--cyan), var(--gold));
+}
+
+.card-cabecalho {
+    text-align: left;
+    margin-bottom: 22px;
+}
+
+.badge-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--green-soft);
+    color: var(--green-dark);
+    font: 700 11px/1 'Segoe UI Variable', 'Aptos', sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.badge-icone {
+    display: block;
+    color: var(--green);
+}
+
+.card-cabecalho h2 {
+    font-size: 25px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.025em;
+    margin: 0 0 8px;
+    line-height: 1.2;
+}
+
+.card-descricao {
+    margin: 0;
     color: var(--muted);
-    font: 15px/1.5 'Trebuchet MS', Arial, sans-serif;
+    font: 14px/1.55 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
-.painel-entrada > .aviso-perfil {
-    margin: 10px 0 22px;
+/* Form & Inputs */
+.form-sala {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.grupo-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.label-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.label-linha label,
+.grupo-campo label {
+    margin: 0;
+    color: var(--ink);
+    font: 700 13px 'Segoe UI Variable', 'Aptos', sans-serif;
+}
+
+.dica-campo {
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
+.input-com-icone {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icone {
+    position: absolute;
+    left: 14px;
+    color: #8fa5b5;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.input-com-icone input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px 0 42px;
+    border: 1.5px solid #d0dde5;
+    border-radius: 10px;
+    background: #fbfdfe;
+    color: var(--ink);
+    font: 15px 'Segoe UI Variable', 'Aptos', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.input-com-icone input:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(8, 127, 140, 0.12);
+}
+
+.input-com-icone:focus-within .input-icone {
+    color: var(--green);
+}
+
+/* Suggestion Chips */
+.sugestoes-bloco {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.sugestoes-label {
+    font: 700 11px 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.chip-sugestao {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid rgba(8, 127, 140, 0.18);
+    border-radius: 8px;
+    background: #f8fafb;
+    color: var(--ink);
+    font: 600 12.5px 'Segoe UI Variable', 'Aptos', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chip-sugestao:hover {
+    background: var(--green-soft);
+    border-color: var(--green);
+    color: var(--green-dark);
+    transform: translateY(-1.5px);
+}
+
+.chip-sugestao:active {
+    transform: translateY(0.5px);
+}
+
+/* Prominent CTA Button */
+.btn-destaque {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border-radius: 10px;
+    font: 700 15px 'Segoe UI Variable', 'Aptos', sans-serif;
+    letter-spacing: 0.01em;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(8, 127, 140, 0.28);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 4px;
+}
+
+.btn-destaque:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(8, 127, 140, 0.38);
+    transform: translateY(-1.5px);
+    filter: brightness(1.04);
+}
+
+.btn-destaque:active:not(:disabled) {
+    transform: translateY(0.5px);
+    box-shadow: 0 2px 8px rgba(8, 127, 140, 0.2);
+}
+
+.btn-destaque .btn-seta {
+    transition: transform 0.2s ease;
+}
+
+.btn-destaque:hover:not(:disabled) .btn-seta {
+    transform: translateX(3px);
+}
+
+/* Trust / Feature Highlights */
+.card-recursos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid #edf2f5;
+}
+
+.recurso-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recurso-icone {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.recurso-texto {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.recurso-texto strong {
+    font: 700 12px 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: var(--ink);
+    line-height: 1.25;
+}
+
+.recurso-texto small {
+    font: 11px 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: var(--muted);
+    line-height: 1.2;
+}
+
+.recurso-divisor {
+    width: 1px;
+    height: 24px;
+    background: #e2ecf2;
+}
+
+/* Google Sign-in Block */
+.bloco-google {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-google {
+    width: 100%;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1.5px solid #d4e0e8;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--ink);
+    font: 600 14px 'Segoe UI Variable', 'Aptos', sans-serif;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-google:hover:not(:disabled) {
+    border-color: var(--green);
+    background: #f7fafc;
+    box-shadow: 0 3px 10px rgba(8, 127, 140, 0.1);
+    transform: translateY(-1px);
+}
+
+.btn-google.google-conectado {
+    border-color: #10b981;
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+.aviso-perfil {
+    margin: 4px 0 0;
+    color: var(--muted);
     font-size: 12px;
+    line-height: 1.45;
+}
+
+.divisor-ou {
+    display: flex;
+    align-items: center;
+    margin: 18px 0 16px;
+    text-align: center;
+    color: var(--muted);
+    font: 700 11px 'Segoe UI Variable', 'Aptos', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.divisor-ou::before,
+.divisor-ou::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2ecf2;
+}
+
+.divisor-ou span {
+    padding: 0 12px;
 }
 
 label {
@@ -819,15 +1178,43 @@ input {
         font-size: 10px;
     }
 
+    .status-wrapper {
+        margin: 12px 0 4px;
+    }
+
     .mensagem-status {
-        min-height: 16px;
-        margin: 6px 0 8px;
+        padding: 5px 12px;
         font-size: 12px;
     }
 
-    .painel-entrada {
-        margin-top: 20px;
-        padding: 18px 15px;
+    .painel-card {
+        margin: 16px auto 24px;
+        padding: 24px 18px 20px;
+        border-radius: 14px;
+    }
+
+    .card-cabecalho h2 {
+        font-size: 21px;
+    }
+
+    .card-recursos {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding-top: 16px;
+    }
+
+    .recurso-divisor {
+        display: none;
+    }
+
+    .chips-container {
+        gap: 6px;
+    }
+
+    .chip-sugestao {
+        padding: 5px 10px;
+        font-size: 12px;
     }
 
     .mesa-de-votos {

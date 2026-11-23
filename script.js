@@ -76,6 +76,16 @@ function atualizarStatus(mensagem, erro = false) {
     mensagemStatus.classList.toggle('erro', erro);
 }
 
+function marcarGoogleConectado() {
+    botaoGoogle.classList.add('google-conectado');
+    const texto = botaoGoogle.querySelector('.btn-google-texto');
+    if (texto) {
+        texto.textContent = 'Perfil do Google conectado';
+    } else {
+        botaoGoogle.textContent = 'Perfil do Google conectado';
+    }
+}
+
 function aplicarPerfilGoogle(usuario, perfilAdicional = null) {
     const perfilProvedor = usuario.providerData.find(provedor => provedor.providerId === 'google.com');
     const nome = usuario.displayName
@@ -85,7 +95,10 @@ function aplicarPerfilGoogle(usuario, perfilAdicional = null) {
         || perfilProvedor?.photoURL
         || (typeof perfilAdicional?.picture === 'string' ? perfilAdicional.picture : '');
     campoNome.disabled = Boolean(nome);
-    if (nome) campoNome.value = nome.slice(0, 32);
+    if (nome) {
+        campoNome.value = nome.slice(0, 32);
+        botaoEntrar.disabled = false;
+    }
 }
 
 function mostrarAvatar(container, participante, classe) {
@@ -127,7 +140,7 @@ async function entrarComGoogle() {
             : { user: usuario };
         participanteId = credencial.user.uid;
         aplicarPerfilGoogle(credencial.user, getAdditionalUserInfo(credencial)?.profile);
-        botaoGoogle.textContent = 'Perfil do Google conectado';
+        marcarGoogleConectado();
         atualizarStatus(campoNome.disabled
             ? 'Perfil conectado. Entre na sala para continuar.'
             : 'Perfil conectado, mas o Google não forneceu um nome. Informe como deseja aparecer na sala.');
@@ -652,6 +665,29 @@ botaoNovaRodada.addEventListener('click', iniciarNovaRodada);
 configurarCartas();
 window.addEventListener('resize', desenharAssentos);
 
+document.querySelectorAll('.chip-sugestao').forEach(chip => {
+    chip.addEventListener('click', () => {
+        const valor = chip.getAttribute('data-valor') || chip.textContent.trim();
+        campoNomeSala.value = valor;
+        campoNomeSala.focus();
+        if (participanteId) {
+            botaoCriarSala.disabled = false;
+        }
+    });
+});
+
+campoNomeSala.addEventListener('input', () => {
+    if (participanteId) {
+        botaoCriarSala.disabled = !campoNomeSala.value.trim();
+    }
+});
+
+campoNome.addEventListener('input', () => {
+    if (participanteId) {
+        botaoEntrar.disabled = !campoNome.value.trim();
+    }
+});
+
 const configuracaoValida = Object.values(firebaseConfig).every(valor =>
     typeof valor === 'string' && valor.length > 0 && !valor.includes('COLOQUE_')
 );
@@ -674,9 +710,9 @@ if (!configuracaoValida) {
                     aplicarPerfilGoogle(usuario);
                 }
                 botaoGoogle.disabled = !usuario.isAnonymous;
-                if (!usuario.isAnonymous) botaoGoogle.textContent = 'Perfil do Google conectado';
-                botaoEntrar.disabled = false;
-                botaoCriarSala.disabled = false;
+                if (!usuario.isAnonymous) marcarGoogleConectado();
+                botaoEntrar.disabled = !campoNome.value.trim();
+                botaoCriarSala.disabled = !campoNomeSala.value.trim();
                 atualizarStatus(salaId ? 'Conexão pronta. Informe seu nome para entrar.' : 'Conexão pronta. Crie uma sala para começar.');
             } else if (!iniciandoAutenticacao) {
                 iniciandoAutenticacao = true;
