@@ -61,12 +61,42 @@ let ouvintesConectados = false;
 let rodadaCartasDesenhada = null;
 let idsVotantesAnteriores = new Set();
 
+function atualizarNomeSalaEmTodosLugares(nome) {
+    const elCodigo = document.getElementById('codigo-sala');
+    if (elCodigo) elCodigo.textContent = nome;
+    const elCard = document.getElementById('nome-sala-card');
+    if (elCard) elCard.textContent = nome;
+    if (nomeMesa) nomeMesa.textContent = nome;
+}
+
+function atualizarAvatarPreview(nome) {
+    const preview = document.getElementById('avatar-preview-entrada');
+    const letra = document.getElementById('avatar-preview-letra');
+    if (!preview || !letra) return;
+
+    if (fotoParticipante) {
+        preview.innerHTML = `<img src="${fotoParticipante}" alt="" class="avatar-preview-img">`;
+        preview.classList.add('com-foto');
+        return;
+    }
+
+    const inicial = (nome || '').trim().charAt(0).toLocaleUpperCase('pt-BR');
+    if (inicial) {
+        preview.classList.add('ativo');
+        letra.textContent = inicial;
+    } else {
+        preview.classList.remove('ativo');
+        letra.textContent = '?';
+    }
+}
+
 painelCriacao.hidden = Boolean(salaId);
 painelEntrada.hidden = !salaId;
 caixaSala.hidden = !salaId;
 if (salaId) {
-    document.getElementById('codigo-sala').textContent = salaId;
+    atualizarNomeSalaEmTodosLugares(salaId);
     campoNome.value = sessionStorage.getItem(`planning-poker-name-${salaId}`) || '';
+    atualizarAvatarPreview(campoNome.value);
 } else {
     document.getElementById('codigo-sala').textContent = 'Nova sala';
 }
@@ -99,6 +129,7 @@ function aplicarPerfilGoogle(usuario, perfilAdicional = null) {
         campoNome.value = nome.slice(0, 32);
         botaoEntrar.disabled = false;
     }
+    atualizarAvatarPreview(campoNome.value);
 }
 
 function mostrarAvatar(container, participante, classe) {
@@ -165,10 +196,10 @@ function definirSala(id, nome) {
     metadataSala = { ...(metadataSala || {}), name: nome };
     parametrosUrl.set('room', id);
     history.replaceState(null, '', `${window.location.pathname}?${parametrosUrl.toString()}`);
-    document.getElementById('codigo-sala').textContent = nome;
-    nomeMesa.textContent = nome;
+    atualizarNomeSalaEmTodosLugares(nome);
     caixaSala.hidden = false;
     campoNome.value = sessionStorage.getItem(`planning-poker-name-${salaId}`) || '';
+    atualizarAvatarPreview(campoNome.value);
 }
 
 function criarIdSala(nome) {
@@ -563,8 +594,7 @@ async function carregarMetadataOuReivindicarSala() {
     if (!metadataSala?.owner || !metadataSala?.name) {
         throw new Error('Os metadados da sala estão incompletos.');
     }
-    document.getElementById('codigo-sala').textContent = metadataSala.name;
-    nomeMesa.textContent = metadataSala.name;
+    atualizarNomeSalaEmTodosLugares(metadataSala.name);
 
     const estadoSnapshot = await get(ref(database, `${caminhoSala}/state`));
     if (!estadoSnapshot.exists() && isDono()) {
@@ -648,14 +678,26 @@ async function iniciarNovaRodada() {
     }
 }
 
-document.getElementById('btn-copiar-link').addEventListener('click', async () => {
-    try {
-        await navigator.clipboard.writeText(window.location.href);
-        atualizarStatus('Link da sala copiado.');
-    } catch (erro) {
-        atualizarStatus('Não foi possível copiar o link neste navegador.', true);
-    }
-});
+const botaoCopiarLink = document.getElementById('btn-copiar-link');
+if (botaoCopiarLink) {
+    botaoCopiarLink.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            const textoBotao = botaoCopiarLink.querySelector('.btn-copiar-texto');
+            if (textoBotao) {
+                textoBotao.textContent = 'Link copiado!';
+                botaoCopiarLink.classList.add('copiado');
+                setTimeout(() => {
+                    textoBotao.textContent = 'Copiar link';
+                    botaoCopiarLink.classList.remove('copiado');
+                }, 2000);
+            }
+            atualizarStatus('Link da sala copiado.');
+        } catch (erro) {
+            atualizarStatus('Não foi possível copiar o link neste navegador.', true);
+        }
+    });
+}
 
 formularioCriacao.addEventListener('submit', criarSala);
 formularioEntrada.addEventListener('submit', entrarNaSala);
@@ -676,6 +718,23 @@ document.querySelectorAll('.chip-sugestao').forEach(chip => {
     });
 });
 
+document.querySelectorAll('.chip-papel').forEach(chip => {
+    chip.addEventListener('click', () => {
+        const papel = chip.getAttribute('data-papel');
+        const valorAtual = campoNome.value.trim();
+        if (!valorAtual) {
+            campoNome.value = papel;
+        } else if (!valorAtual.includes(papel)) {
+            campoNome.value = `${valorAtual} (${papel})`;
+        }
+        campoNome.focus();
+        if (participanteId) {
+            botaoEntrar.disabled = false;
+        }
+        atualizarAvatarPreview(campoNome.value);
+    });
+});
+
 campoNomeSala.addEventListener('input', () => {
     if (participanteId) {
         botaoCriarSala.disabled = !campoNomeSala.value.trim();
@@ -686,6 +745,7 @@ campoNome.addEventListener('input', () => {
     if (participanteId) {
         botaoEntrar.disabled = !campoNome.value.trim();
     }
+    atualizarAvatarPreview(campoNome.value);
 });
 
 const configuracaoValida = Object.values(firebaseConfig).every(valor =>

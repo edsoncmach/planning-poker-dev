@@ -21,10 +21,18 @@
                 </div>
             </div>
             <div id="sala-compartilhada" class="sala-compartilhada" hidden>
-                <span>SALA</span>
-                <strong id="codigo-sala"></strong>
-                <button id="btn-copiar-link" class="btn-icon" type="button" aria-label="Copiar link da sala"
-                    title="Copiar link da sala">Copiar link</button>
+                <div class="sala-badge-info">
+                    <span class="sala-rotulo">SALA ATIVA</span>
+                    <strong id="codigo-sala"></strong>
+                </div>
+                <button id="btn-copiar-link" class="btn-copiar" type="button" aria-label="Copiar link da sala"
+                    title="Copiar link da sala">
+                    <svg class="icone-copiar" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span class="btn-copiar-texto">Copiar link</span>
+                </button>
             </div>
         </header>
 
@@ -120,7 +128,20 @@
                         Identificação
                     </span>
                     <h2>Entre na sala de votação</h2>
-                    <p class="card-descricao">Entre com sua conta Google para sincronizar seu nome e foto ou continue rapidamente informando um nome.</p>
+                    <p class="card-descricao">Conecte sua conta Google ou informe seu nome para começar as estimativas com o time.</p>
+                </div>
+
+                <div class="banner-sala-contexto">
+                    <div class="sala-tag-icone">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                            <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                        </svg>
+                    </div>
+                    <div class="sala-detalhes">
+                        <span class="sala-subtitulo">Sessão da equipe</span>
+                        <strong id="nome-sala-card" class="sala-titulo">Sala de estimativa</strong>
+                    </div>
                 </div>
 
                 <div class="bloco-google">
@@ -131,31 +152,48 @@
                             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.94 0 12c0 2.06.46 3.84 1.26 5.42l4.02-3.15z"/>
                             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
                         </svg>
-                        <span class="btn-google-texto">Usar perfil do Google</span>
+                        <span class="btn-google-texto">Continuar com Google</span>
                     </button>
-                    <p class="aviso-perfil">Ao conectar com Google, seu nome e sua foto são compartilhados apenas com as pessoas da sala.</p>
+                    <p class="aviso-perfil">
+                        <svg class="aviso-lock-icone" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Seu nome e foto serão usados apenas para identificação na mesa.
+                    </p>
                 </div>
 
                 <div class="divisor-ou">
-                    <span>ou continue com nome</span>
+                    <span>ou informe seu nome</span>
                 </div>
 
                 <form id="form-entrada" class="form-sala">
                     <div class="grupo-campo">
-                        <label for="nome-participante">Seu nome ou apelido</label>
-                        <div class="input-com-icone">
-                            <span class="input-icone" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </span>
+                        <div class="label-linha">
+                            <label for="nome-participante">Seu nome ou apelido</label>
+                            <span class="dica-campo">Aparecerá nos votos</span>
+                        </div>
+                        <div class="input-com-avatar">
+                            <div id="avatar-preview-entrada" class="avatar-preview" aria-hidden="true">
+                                <span id="avatar-preview-letra">?</span>
+                            </div>
                             <input id="nome-participante" name="nome" type="text" maxlength="32" autocomplete="name"
-                                placeholder="Ex.: Alex ou dev_marina" required>
+                                placeholder="Digite seu nome (ex.: Alex)" required>
                         </div>
                     </div>
+
+                    <div class="papeis-bloco">
+                        <span class="papeis-label">Papel rápido no time:</span>
+                        <div class="chips-papeis" role="group" aria-label="Sugestões de papel">
+                            <button type="button" class="chip-papel" data-papel="Dev">💻 Dev</button>
+                            <button type="button" class="chip-papel" data-papel="QA">🧪 QA</button>
+                            <button type="button" class="chip-papel" data-papel="PO">🧭 PO</button>
+                            <button type="button" class="chip-papel" data-papel="Tech Lead">⚡ Tech Lead</button>
+                        </div>
+                    </div>
+
                     <button id="btn-entrar" class="btn primary btn-destaque" type="submit" disabled>
-                        <span>Entrar na sala</span>
+                        <span>Entrar na mesa de votação</span>
                         <svg class="btn-seta" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                             <polyline points="12 5 19 12 12 19"></polyline>
