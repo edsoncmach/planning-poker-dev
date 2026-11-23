@@ -269,12 +269,12 @@ function desenharParticipantes() {
         mostrarAvatar(item, participante, 'avatar-participante');
         const nome = document.createElement('span');
         nome.className = 'nome-participante';
-        const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
+        const marcadorDono = id === metadataSala?.owner ? ' 👑' : '';
         nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
         const estado = document.createElement('span');
         const votou = participante.votedRound === rodadaAtual;
         estado.className = votou ? 'estado-voto votou' : 'estado-voto';
-        estado.textContent = votou ? 'Votou' : 'Aguardando';
+        estado.textContent = votou ? '✓ Votou' : 'Aguardando';
         item.append(nome, estado);
         listaParticipantes.appendChild(item);
     });
@@ -379,14 +379,14 @@ function desenharAssentos() {
         mostrarAvatar(assento, participante, 'avatar-assento');
         const nome = document.createElement('p');
         nome.className = 'nome-assento';
-        const marcadorDono = id === metadataSala?.owner ? ' · dono' : '';
+        const marcadorDono = id === metadataSala?.owner ? ' 👑' : '';
         nome.textContent = `${participante.name || 'Participante'}${id === participanteId ? ' (você)' : ''}${marcadorDono}`;
         nome.title = nome.textContent;
         assento.appendChild(nome);
 
         const estado = document.createElement('span');
         estado.className = votou ? 'estado-assento votou' : 'estado-assento';
-        estado.textContent = votou ? 'Voto enviado' : 'Escolhendo';
+        estado.textContent = votou ? '✓ Votou' : 'Escolhendo';
         if (!votou) {
             const cadeira = document.createElement('span');
             cadeira.className = 'icone-cadeira';

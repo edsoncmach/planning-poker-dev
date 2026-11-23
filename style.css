@@ -822,33 +822,100 @@ input {
     background: var(--green-soft);
 }
 
-.barra-sala {
-    min-height: 0;
+/* Barra de Sessão e Participantes */
+.barra-sessao-jogo {
+    display: flex;
     justify-content: space-between;
-    gap: 12px;
-    padding: 5px 0;
-    border-bottom: 1px solid var(--line);
+    align-items: center;
+    gap: 18px;
+    padding: 16px 22px;
+    border: 1px solid rgba(8, 127, 140, 0.16);
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(8, 127, 140, 0.06);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.tag-ao-vivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.ponto-vivo {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 0 2.5px rgba(16, 185, 129, 0.3);
+    animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.sessao-titulos h2 {
+    font: 700 22px 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: var(--ink);
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+}
+
+.status-votos-progresso {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font: 600 13px 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: var(--muted);
+}
+
+.progresso-icone {
+    font-size: 14px;
+}
+
+.status-votos-progresso strong {
+    color: var(--green-dark);
+}
+
+.sessao-participantes-bloco {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.participantes-rotulo {
+    font: 700 10.5px 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .lista-participantes {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 8px;
-    max-width: 70%;
+    gap: 6px;
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
 .participante {
-    flex-wrap: wrap;
-    gap: 6px 10px;
-    padding: 8px 10px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--surface);
-    font: 13px 'Trebuchet MS', Arial, sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px 5px 6px;
+    border: 1px solid rgba(8, 127, 140, 0.16);
+    border-radius: 9999px;
+    background: #f8fafc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+.participante:hover {
+    border-color: var(--green);
+    background: var(--green-soft);
 }
 
 .avatar-participante,
@@ -857,21 +924,24 @@ input {
     flex: 0 0 auto;
     place-items: center;
     overflow: hidden;
-    border: 1px solid var(--line);
     border-radius: 50%;
     background: var(--green-soft);
     color: var(--green-dark);
-    font: 700 12px 'Trebuchet MS', Arial, sans-serif;
+    font: 700 12px 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
 .avatar-participante {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 1px 3px rgba(8, 127, 140, 0.15);
 }
 
 .avatar-assento {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(8, 127, 140, 0.2);
 }
 
 .avatar-participante img,
@@ -883,22 +953,32 @@ input {
 
 .nome-participante {
     color: var(--ink);
-    font-weight: 700;
+    font: 600 12.5px 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
 .estado-voto {
+    font: 700 10px 'Segoe UI Variable', 'Aptos', sans-serif;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: #edf2f5;
     color: var(--muted);
-    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .estado-voto.votou {
-    color: var(--green);
-    font-weight: 700;
+    background: #ecfdf5;
+    color: #065f46;
 }
 
+/* Mesa Virtual de Votos */
 .mesa-de-votos {
-    margin: 12px 0 16px;
-    padding: 12px 14px 14px;
+    border: 1px solid rgba(8, 127, 140, 0.15);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(8, 127, 140, 0.08);
+    margin: 16px 0 20px;
+    padding: 16px 20px 20px;
 }
 
 .mesa-cabecalho,
@@ -919,26 +999,22 @@ input {
     font: 14px 'Trebuchet MS', Arial, sans-serif;
 }
 
-.status-mesa strong {
-    color: var(--ink);
-}
-
 .arena-mesa {
     position: relative;
     z-index: 0;
-    height: clamp(280px, 36vh, 340px);
-    min-height: 280px;
-    margin: 10px 2px 8px;
+    height: clamp(340px, 46vh, 430px);
+    min-height: 340px;
+    margin: 8px 0 16px;
     overflow: hidden;
-    border: 1px solid #d2d6ca;
-    border-radius: 12px;
+    border: 1.5px solid rgba(8, 127, 140, 0.2);
+    border-radius: 24px;
     isolation: isolate;
-    background-color: #edf3f6;
+    background-color: #f1f6f8;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.8) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
-        radial-gradient(#bdccd6 0.7px, transparent 0.7px);
-    background-size: 48px 48px, 48px 48px, 14px 14px;
+        radial-gradient(circle at 50% 50%, rgba(8, 127, 140, 0.08) 0%, transparent 70%),
+        linear-gradient(rgba(24, 75, 102, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 75, 102, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 32px 32px, 32px 32px;
 }
 
 .superficie-mesa {
@@ -946,60 +1022,76 @@ input {
     top: 50%;
     left: 50%;
     display: flex;
-    width: min(48%, 500px);
-    height: 84%;
+    width: min(50%, 520px);
+    height: 80%;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    padding: 18px 28px;
+    padding: 20px 28px;
     transform: translate(-50%, -50%);
-    border: 2px solid #3e6075;
-    border-radius: 22px;
+    border: 2.5px solid #28546e;
+    border-radius: 28px;
     background-color: var(--table);
     background-image:
-        linear-gradient(90deg, transparent 49.7%, rgba(81, 214, 223, 0.12) 50%, transparent 50.3%),
-        repeating-linear-gradient(0deg, transparent 0 17px, rgba(81, 214, 223, 0.07) 18px 19px),
-        radial-gradient(ellipse at 50% 45%, #263e51, var(--table) 75%);
-    box-shadow: 0 8px 0 var(--table-edge), 0 18px 28px rgba(17, 42, 59, 0.2), inset 0 0 0 1px rgba(126, 188, 203, 0.22);
+        radial-gradient(ellipse at 50% 50%, #1a3f55 0%, #0d2230 100%);
+    box-shadow:
+        0 16px 36px rgba(5, 18, 26, 0.45),
+        0 4px 0 #07151e,
+        inset 0 0 25px rgba(0, 0, 0, 0.5);
     color: #f5fbfd;
     text-align: center;
+    z-index: 1;
 }
 
 .superficie-mesa::after {
     position: absolute;
-    inset: 8px;
-    border: 1px solid rgba(81, 214, 223, 0.28);
-    border-radius: 14px;
+    inset: 9px;
+    border: 1.5px solid rgba(81, 214, 223, 0.32);
+    border-radius: 20px;
     content: '';
     pointer-events: none;
+    box-shadow: inset 0 0 14px rgba(81, 214, 223, 0.1);
 }
 
+.sobretitulo-mesa,
 .superficie-mesa .sobretitulo {
-    margin-bottom: 5px;
     color: var(--cyan);
+    font: 700 11px 'Segoe UI Variable', 'Aptos', sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
 }
 
 .superficie-mesa h3 {
     max-width: 100%;
     margin: 0;
     overflow-wrap: anywhere;
-    font-size: clamp(18px, 2.2vw, 28px);
-    line-height: 1.1;
+    font: 800 clamp(18px, 2.3vw, 28px) 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    letter-spacing: -0.01em;
 }
 
 .resumo-mesa {
-    margin: 5px 0 0;
-    color: #c5d7e0;
-    font: 13px 'Trebuchet MS', Arial, sans-serif;
+    margin: 6px 0 0;
+    color: #c2dbe6;
+    font: 500 13px 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
 .media-mesa {
-    max-width: 92%;
-    margin: 6px 0 0;
+    max-width: 94%;
+    margin: 10px 0 0;
+    background: linear-gradient(135deg, rgba(8, 127, 140, 0.45), rgba(198, 239, 94, 0.25));
+    border: 1.5px solid var(--gold);
+    border-radius: 10px;
+    padding: 7px 14px;
     color: var(--gold);
-    font: 700 13px/1.4 'Trebuchet MS', Arial, sans-serif;
+    font: 700 13.5px/1.4 'Segoe UI Variable', 'Aptos', sans-serif;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 10px rgba(198, 239, 94, 0.3);
 }
 
+/* Assentos e Jogadores */
 .assentos-mesa {
     position: absolute;
     z-index: 2;
@@ -1011,37 +1103,44 @@ input {
     top: var(--seat-y);
     left: var(--seat-x);
     display: flex;
-    width: 100px;
+    width: 104px;
     align-items: center;
     flex-direction: column;
-    gap: 2px;
-    padding: 5px 4px 6px;
+    gap: 3px;
+    padding: 6px 6px 7px;
     transform: translate(-50%, -50%);
-    border: 1px solid #c5d5df;
-    border-radius: 12px;
-    background: linear-gradient(145deg, #fff, #f3f8fa);
-    box-shadow: 0 4px 0 #c4d3dc, 0 8px 16px rgba(28, 56, 75, 0.12);
+    border: 1.5px solid rgba(8, 127, 140, 0.2);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(13, 35, 49, 0.12);
     text-align: center;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.assento-mesa:hover {
+    transform: translate(-50%, -54%);
+    box-shadow: 0 8px 20px rgba(13, 35, 49, 0.18);
 }
 
 .nome-assento {
     width: 100%;
-    min-height: 22px;
+    min-height: 20px;
     margin: 0;
-    padding: 3px 2px;
+    padding: 2px 2px;
     color: var(--ink);
-    font: 700 12px/1.25 'Trebuchet MS', Arial, sans-serif;
+    font: 700 12px/1.25 'Segoe UI Variable', 'Aptos', sans-serif;
     overflow-wrap: anywhere;
 }
 
 .estado-assento {
     display: flex;
-    min-height: 13px;
+    min-height: 14px;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    color: #65726b;
-    font: 10px/1.2 'Trebuchet MS', Arial, sans-serif;
+    color: #6a8291;
+    font: 600 10.5px/1.2 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
 .icone-cadeira {
@@ -1068,7 +1167,7 @@ input {
 }
 
 .estado-assento.votou {
-    color: var(--green-dark);
+    color: #059669;
     font-weight: 700;
 }
 
@@ -1121,10 +1220,10 @@ input {
     display: grid;
     place-items: center;
     backface-visibility: hidden;
-    border: 1px solid #77dce2;
-    border-radius: 7px;
-    box-shadow: 0 4px 8px rgba(31, 48, 45, 0.22);
-    font: 700 21px Georgia, 'Times New Roman', serif;
+    border: 1.5px solid #77dce2;
+    border-radius: 9px;
+    box-shadow: 0 4px 10px rgba(13, 35, 49, 0.22);
+    font: 800 22px 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
 .verso-carta {
@@ -1284,53 +1383,163 @@ input {
     font-size: 19px;
 }
 
+/* Controles da Mesa */
 .controles-mesa {
-    padding: 2px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-top: 8px;
+    flex-wrap: wrap;
+}
+
+.status-meu-voto {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rotulo-meu-voto {
+    color: var(--muted);
+    font: 600 13.5px 'Segoe UI Variable', 'Aptos', sans-serif;
+}
+
+.badge-voto-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: var(--green-soft);
+    border: 1px solid rgba(8, 127, 140, 0.25);
+    color: var(--green-dark);
+    font: 700 14px 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
 .acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
+}
+
+.btn-revelar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    color: #ffffff;
+    font: 700 14px 'Segoe UI Variable', 'Aptos', sans-serif;
+    box-shadow: 0 4px 14px rgba(8, 127, 140, 0.28);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-revelar:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(8, 127, 140, 0.38);
+    transform: translateY(-1.5px);
+    filter: brightness(1.05);
+}
+
+.btn-nova-rodada {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(8, 127, 140, 0.22);
+    background: #f8fafc;
+    color: var(--green-dark);
+    font: 700 14px 'Segoe UI Variable', 'Aptos', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-nova-rodada:hover:not(:disabled) {
+    background: var(--green-soft);
+    border-color: var(--green);
+    transform: translateY(-1px);
 }
 
 .aviso-dono {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    background: rgba(8, 127, 140, 0.08);
     color: var(--muted);
-    font: 12px/1.4 'Trebuchet MS', Arial, sans-serif;
+    font: 600 12px 'Segoe UI Variable', 'Aptos', sans-serif;
+}
+
+/* Deck de Cartas Fibonacci */
+.deck-cartas {
+    border: 1px solid rgba(8, 127, 140, 0.15);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(8, 127, 140, 0.06);
+    padding: 22px 24px;
+    margin-bottom: 24px;
 }
 
 .deck-cabecalho {
-    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.deck-tag {
+    margin-bottom: 6px;
+}
+
+.deck-titulos h2 {
+    font: 700 22px 'Segoe UI Variable', 'Aptos', sans-serif;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.deck-dica {
+    color: var(--muted);
+    font: 500 13px 'Segoe UI Variable', 'Aptos', sans-serif;
 }
 
 .cartas {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
-    gap: 7px;
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+    gap: 10px;
 }
 
 .carta {
     min-width: 0;
     aspect-ratio: 0.72;
-    border: 1px solid #b9c8bf;
-    border-radius: 5px;
-    background: var(--surface);
-    box-shadow: 0 2px 0 #d8e1db;
+    border: 1.5px solid #cbd8df;
+    border-radius: 11px;
+    background: linear-gradient(180deg, #ffffff 0%, #f6fafc 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(8, 127, 140, 0.06);
     color: var(--ink);
-    font: 700 24px Georgia, 'Times New Roman', serif;
-    transition: border-color 120ms ease, background-color 120ms ease, transform 120ms ease;
+    font: 800 23px 'Segoe UI Variable', 'Aptos', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .carta:hover:not(:disabled) {
-    transform: translateY(-3px);
+    transform: translateY(-8px) scale(1.04);
     border-color: var(--green);
+    box-shadow: 0 12px 24px rgba(8, 127, 140, 0.22);
 }
 
 .carta.selecionada {
-    transform: translateY(-4px);
-    border-color: var(--green-dark);
-    background: var(--green);
-    color: white;
+    transform: translateY(-10px);
+    border-color: var(--cyan);
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    color: #ffffff;
+    box-shadow: 0 14px 28px rgba(8, 127, 140, 0.38), 0 0 0 3px rgba(81, 214, 223, 0.45);
 }
 
 [hidden] {
@@ -1449,10 +1658,17 @@ input {
         padding: 9px 9px 11px;
     }
 
+    .barra-sessao-jogo {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
     .barra-sala {
         align-items: flex-start;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
         padding: 5px 0;
     }
 
@@ -1469,6 +1685,9 @@ input {
         justify-content: flex-start;
         max-width: 100%;
         width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        flex-wrap: nowrap;
     }
 
     .arena-mesa {
@@ -1478,12 +1697,12 @@ input {
     }
 
     .superficie-mesa {
-        width: min(62%, 280px);
-        height: 56%;
+        width: min(65%, 260px);
+        height: 55%;
         min-height: 0;
         padding: 12px 14px;
-        border-width: 9px;
-        border-radius: 19px;
+        border: 2px solid #28546e;
+        border-radius: 20px;
     }
 
     .assento-mesa {
@@ -1671,18 +1890,32 @@ input {
         font-size: 12px;
     }
 
+    .controles-mesa {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .status-meu-voto {
+        justify-content: space-between;
+        width: 100%;
+    }
+
     .acoes {
-        margin-top: 6px;
+        width: 100%;
+        gap: 8px;
     }
 
     .acoes .btn {
-        min-height: 36px;
-        padding: 8px 10px;
-        font-size: 12px;
+        flex: 1 1 auto;
+        justify-content: center;
+        min-height: 40px;
+        padding: 8px 12px;
+        font-size: 13px;
     }
 
     .deck-cabecalho {
-        margin-bottom: 6px;
+        margin-bottom: 10px;
     }
 
     .deck-cabecalho h2 {
@@ -1690,13 +1923,13 @@ input {
     }
 
     .cartas {
-        grid-template-columns: repeat(7, minmax(0, 1fr));
-        gap: 6px;
+        grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+        gap: 8px;
     }
 
     .carta {
-        border-radius: 4px;
-        font-size: 19px;
+        border-radius: 8px;
+        font-size: 18px;
     }
 
     .linha-entrada {
